@@ -102,10 +102,12 @@
 			</div>
 		</form>	
 
-		<button id="btn_toggle_ai" class="btn btn-secondary">AI TRACKING ON</button>
-		<button id="btn_toggle_video" class="btn btn-secondary">VIDEO ON/OFF</button>			
-		<button id="btn_toggle_3d" class="btn btn-secondary">3D VIEW ON/OFF</button>
-		<button id="btn_toggle_debug" class="btn btn-secondary">DEBUG ON/OFF</button>
+		<!-- Body Tracker Buttons -->
+		<button id="btn_toggle_ai" class="btn btn-secondary" style="display: none;">AI TRACKING ON</button>
+		<button id="btn_toggle_video" class="btn btn-secondary" style="display: none;">VIDEO ON/OFF</button>
+		<button id="btn_toggle_3d" class="btn btn-secondary" style="display: none;">3D VIEW ON/OFF</button>
+		<button id="btn_toggle_debug" class="btn btn-secondary" style="display: none;">DEBUG ON/OFF</button>
+
 
 		<div id="video_src_area" style="display:none" class="text-center mt-3">
 			<div class="container justify-content-center">
@@ -132,7 +134,7 @@
 			</div>
 		</div>
 	</div>
-	<button id="btn_toggle_controls" class="btn btn-primary">SHOW/HIDE CONTROLS</button>
+	<button id="btn_toggle_controls" class="btn btn-primary" style="display: none;">HIDE/SHOW CONTROLS</button>
 
 	<div class="mt-2 text-center" id="status"></div>
 
@@ -143,10 +145,15 @@
 	  </video>
 	  <div id="info_debug"></div>
 	  <div id="info_counter"></div>
+	  <style>
+		#info_counter {
+		  display: none; /* Hides the element completely */
+		}
+	  </style>
+	  
 	</div>
 	<div id="view_3d"></div>
-	<div class="footer"><b>JS AI BODY TRACKER</b> v.1.0.0 | © 2022 Marcin "szczyglis" Szczyglinski | <a href="https://github.com/szczyglis-dev/js-ai-body-tracker" target="_blank">GitHUB</a></div>
-
+	
 	<!-- Load Tensor Flow -->
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
