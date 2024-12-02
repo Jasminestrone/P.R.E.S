@@ -23,6 +23,39 @@
 </head>
 
 <body>
+
+	<!-- Speech to Text -->
+
+	<button id="startButton">Start Voice Input</button>
+    <div id="output"></div>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+		const outputDiv = document.getElementById('output');
+
+		const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+		recognition.lang = 'en-US';
+
+		recognition.onstart = () => {
+    		startButton.textContent = 'Listening...';
+		};
+
+		recognition.onresult = (event) => {
+			const transcript = event.results[0][0].transcript;
+			outputDiv.textContent = transcript;
+		};
+
+		recognition.onend = () => {
+			startButton.textContent = 'Start Voice Input';
+		};
+
+		startButton.addEventListener('click', () => {
+			recognition.start();
+		});
+    </script>
+
+	<!-- Body Tracker -->
+
 	<div class="gh">
 	    <div class="demo version-section"><a target="_blank" href="https://github.com/szczyglis-dev/js-ai-body-tracker"
 	                                         class="github-corner" aria-label="View source on GitHub">
@@ -43,8 +76,8 @@
 				<div class="row">
 					<div class="col-md-6">
 						<button type="button" id="source-camera" class="source-select btn btn-primary" data-source="camera" >WEBCAM</button>  
-						<button type="button" id="source-video" class="source-select btn btn-primary" data-source="video" >VIDEO</button>  
-						<button type="button" id="source-stream" class="source-select btn btn-primary" data-source="stream">STREAM (IPTV / m3u8)</button>
+						<!-- <button type="button" id="source-video" class="source-select btn btn-primary" data-source="video" >VIDEO</button>  
+						<button type="button" id="source-stream" class="source-select btn btn-primary" data-source="stream">STREAM (IPTV / m3u8)</button> -->
 					</div>
 					<div class="col-md-6">
 						<div class="input-group mb-2">
@@ -69,7 +102,7 @@
 			</div>
 		</form>	
 
-		<button id="btn_toggle_ai" class="btn btn-secondary">AI TRACKING ON/OFF</button>
+		<button id="btn_toggle_ai" class="btn btn-secondary">AI TRACKING ON</button>
 		<button id="btn_toggle_video" class="btn btn-secondary">VIDEO ON/OFF</button>			
 		<button id="btn_toggle_3d" class="btn btn-secondary">3D VIEW ON/OFF</button>
 		<button id="btn_toggle_debug" class="btn btn-secondary">DEBUG ON/OFF</button>
