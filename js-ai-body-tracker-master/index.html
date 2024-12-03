@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>JS AI Body Tracker</title>
+    <title>P.E.R.F.E.C.T</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
 </head>
 <body>
@@ -29,11 +29,17 @@
         const outputDiv = document.getElementById('output');
 
         const grammar = "uh"
+        const gram2 = "um"
+        const gram3 = "ah"
+        const gram4 = "hmm"
 
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         const speechRecognitionList = new (window.SpeechGrammarList || window.webkitSpeechGrammarList)();
         recognition.lang = 'en-US';
         speechRecognitionList.addFromString(grammar, 1);
+        speechRecognitionList.addFromString(gram2, 1);
+        speechRecognitionList.addFromString(gram3, 1);
+        speechRecognitionList.addFromString(gram4, 1);
         recognition.grammars = speechRecognitionList;
 
         recognition.onstart = () => {
