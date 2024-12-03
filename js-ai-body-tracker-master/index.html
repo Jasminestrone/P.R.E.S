@@ -28,8 +28,13 @@
         const startButton = document.getElementById('startButton');
         const outputDiv = document.getElementById('output');
 
+        const grammar = "uh"
+
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        const speechRecognitionList = new (window.SpeechGrammarList || window.webkitSpeechGrammarList)();
         recognition.lang = 'en-US';
+        speechRecognitionList.addFromString(grammar, 1);
+        recognition.grammars = speechRecognitionList;
 
         recognition.onstart = () => {
             startButton.textContent = 'Listening...';
