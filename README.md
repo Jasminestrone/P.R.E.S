@@ -1,4 +1,4 @@
-# Presentation-Pal
+# P.R.E.S
 Release: **beta1** | build: **2024.12.01**
 
 ## Features
