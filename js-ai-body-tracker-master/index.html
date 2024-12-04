@@ -61,19 +61,34 @@
             );
         }
 
+
         document.addEventListener("DOMContentLoaded", () => {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const analyserNode = audioContext.createAnalyser();
+            let audioContext, analyserNode, detector, input;
 
-            document
-                .getElementById("resume-button")
-                .addEventListener("click", () => audioContext.resume());
+            // Resume button click event
+            document.getElementById("resume-button").addEventListener("click", () => {
+                // Create the AudioContext and initialize pitch detection
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyserNode = audioContext.createAnalyser();
+                    detector = PitchDetector.forFloat32Array(analyserNode.fftSize);
 
-            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-                audioContext.createMediaStreamSource(stream).connect(analyserNode);
-                const detector = PitchDetector.forFloat32Array(analyserNode.fftSize);
-                const input = new Float32Array(detector.inputLength);
-                updatePitch(analyserNode, detector, input, audioContext.sampleRate);
+                    // Access user microphone
+                    navigator.mediaDevices.getUserMedia({ audio: true })
+                        .then((stream) => {
+                            audioContext.createMediaStreamSource(stream).connect(analyserNode);
+                            input = new Float32Array(detector.inputLength);
+
+                            // Start pitch detection
+                            updatePitch(analyserNode, detector, input, audioContext.sampleRate);
+                        })
+                        .catch((error) => {
+                            console.error("Error accessing audio stream:", error);
+                        });
+                }
+
+                // Resume the AudioContext if it was suspended
+                audioContext.resume();
             });
         });
     </script>
