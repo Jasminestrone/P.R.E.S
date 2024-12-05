@@ -245,51 +245,50 @@
             if (results.poseLandmarks) {
                 const landmarks = results.poseLandmarks;
 
-                // Extract key landmarks for waist and shoulders
-                const leftShoulder = landmarks[6];
-                const rightShoulder = landmarks[5];
-                const leftWaist = landmarks[12];
-                const rightWaist = landmarks[11];
+                // Extract key landmarks for waist, shoulders, and knees
+            const leftShoulder = landmarks[11];
+            const leftWaist = landmarks[23];
+            const leftKnee = landmarks[25];
 
-                // Calculate vectors for shoulder orientation
-                const shoulderVector = {
-                    x: rightShoulder.x - leftShoulder.x,
-                    y: rightShoulder.y - leftShoulder.y,
-                    z: rightShoulder.z - leftShoulder.z,
-                };
+            // Calculate vector from waist to shoulder
+            const waistToShoulderVector = {
+                x: leftShoulder.x - leftWaist.x,
+                y: leftShoulder.y - leftWaist.y,
+                z: leftShoulder.z - leftWaist.z,
+            };
 
-                // Calculate vectors for waist orientation
-                const waistVector = {
-                    x: rightWaist.x - leftWaist.x,
-                    y: rightWaist.y - leftWaist.y,
-                    z: rightWaist.z - leftWaist.z,
-                };
+            // Calculate vector from waist to knee
+            const waistToKneeVector = {
+                x: leftKnee.x - leftWaist.x,
+                y: leftKnee.y - leftWaist.y,
+                z: leftKnee.z - leftWaist.z,
+            };
 
-                // Function to calculate magnitude of a vector
-                function magnitude(vector) {
-                    return Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
-                }
+            // Function to calculate magnitude of a vector
+            function magnitude(vector) {
+                return Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
+            }
 
-                // Function to calculate dot product of two vectors
-                function dotProduct(vector1, vector2) {
-                    return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
-                }
+            // Function to calculate dot product of two vectors
+            function dotProduct(vector1, vector2) {
+                return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
+            }
 
-                // Calculate the dot product of the two vectors
-                const dot = dotProduct(shoulderVector, waistVector);
+            // Calculate the dot product of the two vectors
+            const dot = dotProduct(waistToShoulderVector, waistToKneeVector);
 
-                // Calculate the magnitudes of the vectors
-                const magnitudeShoulder = magnitude(shoulderVector);
-                const magnitudeWaist = magnitude(waistVector);
+            // Calculate the magnitudes of the vectors
+            const magnitudeShoulder = magnitude(waistToShoulderVector);
+            const magnitudeKnee = magnitude(waistToKneeVector);
 
-                // Calculate the angle in radians
-                const angleRadians = Math.acos(dot / (magnitudeShoulder * magnitudeWaist));
+            // Calculate the angle in radians
+            const angleRadians = Math.acos(dot / (magnitudeShoulder * magnitudeKnee));
 
-                // Convert to degrees if needed
-                const angleDegrees = angleRadians * (180 / Math.PI);
+            // Convert to degrees if needed
+            const angleDegrees = angleRadians * (180 / Math.PI);
 
-                // Log the angle
-                console.log('Angle between shoulders and waist:', angleDegrees.toFixed(2));
+            // Log the angle
+            console.log('Angle at waist:', angleDegrees.toFixed(2));
 
 
 
