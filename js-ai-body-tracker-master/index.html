@@ -36,6 +36,9 @@
             <div>
                 <strong>Right Eye:</strong> <span id="rightEyeCoords">x: --, y: --, z: --</span>
             </div>
+            <div>
+                <strong>Head Angle:</strong> <span id="headAngleInfo">Yaw: --, Pitch: --, Roll: --</span>
+            </div>
         </div>
 
         <!-- Body Tracking Section -->
@@ -213,8 +216,9 @@
                 console.log(`Roll: ${roll360.toFixed(2)}°`);
 
                 // Display angles on the webpage
-                document.getElementById('leftEyeCoords').textContent = `Yaw: ${yaw360.toFixed(2)}°`;
-                document.getElementById('rightEyeCoords').textContent = `Pitch: ${pitch360.toFixed(2)}°, Roll: ${roll360.toFixed(2)}°`;
+                document.getElementById('leftEyeCoords').textContent = `x: ${leftEye.x.toFixed(2)}, y: ${leftEye.y.toFixed(2)}, z: ${leftEye.z.toFixed(2)}`;
+                document.getElementById('rightEyeCoords').textContent = `x: ${rightEye.x.toFixed(2)}, y: ${rightEye.y.toFixed(2)}, z: ${rightEye.z.toFixed(2)}`;
+                document.getElementById('headAngleInfo').textContent = `Yaw: ${yaw360.toFixed(2)}°, Pitch: ${pitch360.toFixed(2)}°, Roll: ${roll360.toFixed(2)}°`;
 
                 // Draw skeleton connections and keypoints
                 const keypointConnections = [
