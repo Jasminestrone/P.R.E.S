@@ -6,6 +6,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://cdn.plot.ly/plotly-2.24.2.min.js"></script>
     <style>
         .flex-container {
             display: flex;
@@ -21,6 +22,12 @@
         .info-section {
             flex: 1;
         }
+
+        .heatmap-container {
+            margin-top: 20px;
+            width: 640px;
+            height: 480px;
+        }
     </style>
 </head>
 <body>
@@ -31,6 +38,8 @@
             <!-- Camera Output Section -->
             <div class="camera-section">
                 <canvas id="canvas" width="640" height="480" style="border: 1px solid black;"></canvas>
+                <!-- Heatmap Container -->
+                <div id="heatmap" class="heatmap-container"></div>
             </div>
 
             <!-- Buttons and Text Section -->
@@ -142,6 +151,44 @@
 
     <!-- Body Tracking -->
     <script>
+        // Array to store gaze data
+        let gazePoints = [];
+
+        function update3DHeatmap() {
+            const heatmap = document.getElementById('heatmap');
+
+            // Extract X, Y, and Z coordinates from gazePoints
+            const x = gazePoints.map(point => point.x);
+            const y = gazePoints.map(point => point.y);
+            const z = gazePoints.map(point => point.z);
+
+            // Generate the 3D scatter plot
+            const data = [{
+                x: x,
+                y: y,
+                z: z,
+                mode: 'markers',
+                marker: {
+                    size: 5,
+                    color: z,
+                    colorscale: 'Viridis',
+                    opacity: 0.8
+                },
+                type: 'scatter3d'
+            }];
+
+            const layout = {
+                scene: {
+                    xaxis: { title: 'X' },
+                    yaxis: { title: 'Y' },
+                    zaxis: { title: 'Z' }
+                },
+                margin: { l: 0, r: 0, b: 0, t: 0 }
+            };
+
+            Plotly.newPlot(heatmap, data, layout);
+        }
+
         async function initializeBlazePose() {
             const pose = new Pose({
                 locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
@@ -263,6 +310,19 @@
                     y: nose.y - (leftEye.y + rightEye.y) / 2,
                     z: nose.z - (leftEye.z + rightEye.z) / 2,
                 };
+
+                // Estimate gaze direction
+                const gazeX = (leftEye.x + rightEye.x) / 2;
+                const gazeY = (leftEye.y + rightEye.y) / 2;
+                const gazeZ = (leftEye.z + rightEye.z) / 2;
+
+                // Add the gaze point to the array
+                gazePoints.push({ x: gazeX, y: gazeY, z: gazeZ });
+
+                // Update the heatmap every 30 frames
+                if (gazePoints.length % 30 === 0) {
+                    update3DHeatmap();
+                }
 
                 // Calculate Yaw (rotation around vertical axis)
                 const yaw = Math.atan2(eyeVector.z, eyeVector.x) * (180 / Math.PI);
