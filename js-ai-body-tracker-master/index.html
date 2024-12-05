@@ -177,7 +177,55 @@
             if (results.poseLandmarks) {
                 const landmarks = results.poseLandmarks;
 
-                // Extract key landmarks
+                // Extract key landmarks for waist and shoulders
+                const leftShoulder = landmarks[6];
+                const rightShoulder = landmarks[5];
+                const leftWaist = landmarks[12];
+                const rightWaist = landmarks[11];
+
+                // Calculate vectors for shoulder orientation
+                const shoulderVector = {
+                    x: rightShoulder.x - leftShoulder.x,
+                    y: rightShoulder.y - leftShoulder.y,
+                    z: rightShoulder.z - leftShoulder.z,
+                };
+
+                // Calculate vectors for waist orientation
+                const waistVector = {
+                    x: rightWaist.x - leftWaist.x,
+                    y: rightWaist.y - leftWaist.y,
+                    z: rightWaist.z - leftWaist.z,
+                };
+
+                // Function to calculate magnitude of a vector
+                function magnitude(vector) {
+                    return Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
+                }
+
+                // Function to calculate dot product of two vectors
+                function dotProduct(vector1, vector2) {
+                    return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
+                }
+
+                // Calculate the dot product of the two vectors
+                const dot = dotProduct(shoulderVector, waistVector);
+
+                // Calculate the magnitudes of the vectors
+                const magnitudeShoulder = magnitude(shoulderVector);
+                const magnitudeWaist = magnitude(waistVector);
+
+                // Calculate the angle in radians
+                const angleRadians = Math.acos(dot / (magnitudeShoulder * magnitudeWaist));
+
+                // Convert to degrees if needed
+                const angleDegrees = angleRadians * (180 / Math.PI);
+
+                // Log the angle
+                console.log('Angle between shoulders and waist:', angleDegrees.toFixed(2));
+
+
+
+                // Extract key landmarks for eye
                 const leftEye = landmarks[2];
                 const rightEye = landmarks[5];
                 const nose = landmarks[0];
