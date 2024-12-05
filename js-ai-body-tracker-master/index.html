@@ -6,7 +6,6 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <!-- Add any additional CSS here -->
 </head>
 <body>
     <div class="container">
@@ -28,90 +27,76 @@
             </div>
         </div>
 
+        <!-- Eye Coordinates Output Section -->
+        <div class="mt-4">
+            <h3>Eye Coordinates</h3>
+            <div>
+                <strong>Left Eye:</strong> <span id="leftEyeCoords">x: --, y: --, z: --</span>
+            </div>
+            <div>
+                <strong>Right Eye:</strong> <span id="rightEyeCoords">x: --, y: --, z: --</span>
+            </div>
+        </div>
+
         <!-- Body Tracking Section -->
         <div class="mt-5">
             <canvas id="canvas" width="640" height="480" style="border: 1px solid black;"></canvas>
         </div>
     </div>
 
-    <!-- TensorFlow.js and Pose Detection -->
+    <!-- TensorFlow.js and BlazePose -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
 
-    <!-- Pitch Detection Library -->
+    <!-- Pitch Detection -->
     <script type="module">
         import { PitchDetector } from "https://esm.sh/pitchy@4";
-
-        // Pitch Detection Code
-        function updatePitch(analyserNode, detector, input, sampleRate) {
-            analyserNode.getFloatTimeDomainData(input);
-            const [pitch, clarity] = detector.findPitch(input, sampleRate);
-
-            document.getElementById("pitch").textContent = pitch
-                ? `${(Math.round(pitch * 10) / 10).toFixed(1)} Hz`
-                : '-- Hz';
-            document.getElementById("clarity").textContent = clarity
-                ? `${Math.round(clarity * 100)} %`
-                : '-- %';
-            window.setTimeout(
-                () => updatePitch(analyserNode, detector, input, sampleRate),
-                100,
-            );
-        }
-
 
         document.addEventListener("DOMContentLoaded", () => {
             let audioContext, analyserNode, detector, input;
 
-            // Resume button click event
             document.getElementById("resume-button").addEventListener("click", () => {
-                // Create the AudioContext and initialize pitch detection
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     analyserNode = audioContext.createAnalyser();
                     detector = PitchDetector.forFloat32Array(analyserNode.fftSize);
 
-                    // Access user microphone
                     navigator.mediaDevices.getUserMedia({ audio: true })
                         .then((stream) => {
-                            audioContext.createMediaStreamSource(stream).connect(analyserNode);
+                            const source = audioContext.createMediaStreamSource(stream);
+                            source.connect(analyserNode);
                             input = new Float32Array(detector.inputLength);
 
-                            // Start pitch detection
-                            updatePitch(analyserNode, detector, input, audioContext.sampleRate);
-                        })
-                        .catch((error) => {
-                            console.error("Error accessing audio stream:", error);
-                        });
-                }
+                            function updatePitch() {
+                                analyserNode.getFloatTimeDomainData(input);
+                                const [pitch, clarity] = detector.findPitch(input, audioContext.sampleRate);
 
-                // Resume the AudioContext if it was suspended
+                                document.getElementById("pitch").textContent = pitch
+                                    ? `${(Math.round(pitch * 10) / 10).toFixed(1)} Hz`
+                                    : '-- Hz';
+                                document.getElementById("clarity").textContent = clarity
+                                    ? `${Math.round(clarity * 100)} %`
+                                    : '-- %';
+                                setTimeout(updatePitch, 100);
+                            }
+                            updatePitch();
+                        })
+                        .catch((error) => console.error("Audio stream error:", error));
+                }
                 audioContext.resume();
             });
         });
     </script>
 
-    <!-- Speech Recognition and Body Tracking Scripts -->
+    <!-- Voice Recognition -->
     <script>
-        // Speech Recognition Code
         const startButton = document.getElementById('startButton');
         const outputDiv = document.getElementById('output');
 
-        const grammar = "uh";
-        const gram2 = "um";
-        const gram3 = "ah";
-        const gram4 = "hmm";
-
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        const speechRecognitionList = new (window.SpeechGrammarList || window.webkitSpeechGrammarList)();
         recognition.lang = 'en-US';
-        speechRecognitionList.addFromString(grammar, 1);
-        speechRecognitionList.addFromString(gram2, 1);
-        speechRecognitionList.addFromString(gram3, 1);
-        speechRecognitionList.addFromString(gram4, 1);
-        recognition.grammars = speechRecognitionList;
 
         recognition.onstart = () => {
             startButton.textContent = 'Listening...';
@@ -129,30 +114,37 @@
         startButton.addEventListener('click', () => {
             recognition.start();
         });
+    </script>
 
-        // Body Tracking Code
-        async function initializeBodyTracking() {
-            try {
-                await tf.setBackend('webgl');
-                await tf.ready();
+    <!-- Body Tracking -->
+    <script>
+        async function initializeBlazePose() {
+            const pose = new Pose({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+            });
 
-                const detectorConfig = {
-                    modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
-                };
+            pose.setOptions({
+                modelComplexity: 1,
+                smoothLandmarks: true,
+                enableSegmentation: false,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5,
+            });
 
-                const detector = await poseDetection.createDetector(
-                    poseDetection.SupportedModels.MoveNet,
-                    detectorConfig
-                );
+            pose.onResults(onPoseResults);
 
-                const canvas = document.getElementById('canvas');
-                const ctx = canvas.getContext('2d');
-                const video = await setupCamera();
+            const video = await setupCamera();
+            video.play();
 
-                trackBody(video, detector, canvas, ctx);
-            } catch (error) {
-                console.error("Error initializing body tracker:", error);
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            async function processVideo() {
+                await pose.send({ image: video });
+                requestAnimationFrame(processVideo);
             }
+
+            processVideo();
         }
 
         async function setupCamera() {
@@ -169,70 +161,107 @@
 
             video.srcObject = stream;
             await new Promise((resolve) => (video.onloadedmetadata = resolve));
-            video.play();
             return video;
         }
 
-        async function trackBody(video, detector, canvas, ctx) {
-            const keypointConnections = [
-                [0, 1],  // Nose to Left Eye
-                [0, 2],  // Nose to Right Eye
-                [1, 3],  // Left Eye to Left Ear
-                [2, 4],  // Right Eye to Right Ear
-                [5, 6],  // Left Shoulder to Right Shoulder
-                [5, 7],  // Left Shoulder to Left Elbow
-                [7, 9],  // Left Elbow to Left Wrist
-                [6, 8],  // Right Shoulder to Right Elbow
-                [8, 10], // Right Elbow to Right Wrist
-                [5, 11], // Left Shoulder to Left Hip
-                [6, 12], // Right Shoulder to Right Hip
-                [11, 12],// Left Hip to Right Hip
-                [11, 13],// Left Hip to Left Knee
-                [13, 15],// Left Knee to Left Ankle
-                [12, 14],// Right Hip to Right Knee
-                [14, 16] // Right Knee to Right Ankle
-            ];
+        function onPoseResults(results) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            async function renderFrame() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
-                const poses = await detector.estimatePoses(video);
-                if (poses && poses.length > 0) {
-                    const keypoints = poses[0].keypoints;
+            if (results.poseLandmarks) {
+                const landmarks = results.poseLandmarks;
 
-                    // Draw keypoints
-                    keypoints.forEach((keypoint) => {
-                        if (keypoint.score > 0.5) {
-                            ctx.beginPath();
-                            ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
-                            ctx.fillStyle = "red";
-                            ctx.fill();
-                        }
-                    });
+                // Extract key landmarks
+                const leftEye = landmarks[2];
+                const rightEye = landmarks[5];
+                const nose = landmarks[0];
 
-                    // Draw skeleton
-                    keypointConnections.forEach(([startIdx, endIdx]) => {
-                        const startPoint = keypoints[startIdx];
-                        const endPoint = keypoints[endIdx];
-                        if (startPoint.score > 0.5 && endPoint.score > 0.5) {
-                            ctx.beginPath();
-                            ctx.moveTo(startPoint.x, startPoint.y);
-                            ctx.lineTo(endPoint.x, endPoint.y);
-                            ctx.strokeStyle = "blue";
-                            ctx.lineWidth = 2;
-                            ctx.stroke();
-                        }
-                    });
-                }
+                // Calculate vectors for head orientation
+                const eyeVector = {
+                    x: rightEye.x - leftEye.x,
+                    y: rightEye.y - leftEye.y,
+                    z: rightEye.z - leftEye.z,
+                };
 
-                requestAnimationFrame(renderFrame);
+                const noseVector = {
+                    x: nose.x - (leftEye.x + rightEye.x) / 2,
+                    y: nose.y - (leftEye.y + rightEye.y) / 2,
+                    z: nose.z - (leftEye.z + rightEye.z) / 2,
+                };
+
+                // Calculate Yaw (rotation around vertical axis)
+                const yaw = Math.atan2(eyeVector.z, eyeVector.x) * (180 / Math.PI);
+
+                // Calculate Pitch (rotation around horizontal axis)
+                const pitch = Math.atan2(noseVector.z, noseVector.y) * (180 / Math.PI);
+
+                // Calculate Roll (tilt)
+                const roll = Math.atan2(eyeVector.y, eyeVector.x) * (180 / Math.PI);
+
+                // Normalize angles to 0–360 degrees
+                const normalizeAngle = (angle) => (angle < 0 ? angle + 360 : angle);
+                const yaw360 = normalizeAngle(yaw);
+                const pitch360 = normalizeAngle(pitch);
+                const roll360 = normalizeAngle(roll);
+
+                // Log angles
+                console.log(`Yaw: ${yaw360.toFixed(2)}°`);
+                console.log(`Pitch: ${pitch360.toFixed(2)}°`);
+                console.log(`Roll: ${roll360.toFixed(2)}°`);
+
+                // Display angles on the webpage
+                document.getElementById('leftEyeCoords').textContent = `Yaw: ${yaw360.toFixed(2)}°`;
+                document.getElementById('rightEyeCoords').textContent = `Pitch: ${pitch360.toFixed(2)}°, Roll: ${roll360.toFixed(2)}°`;
+
+                // Draw skeleton connections and keypoints
+                const keypointConnections = [
+                    // Face connections
+                    [0, 1], [1, 2], [2, 3], // Left Eye connections
+                    [0, 4], [4, 5], [5, 6], // Right Eye connections
+                    [1, 7], [4, 8],         // Nose to ears
+                    [9, 10],                // Mouth connections
+                    // Body connections
+                    [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], // Legs
+                    [11, 23], [12, 24], [23, 24], [23, 25], [24, 26]  // Upper body
+                ];
+
+                keypointConnections.forEach(([startIdx, endIdx]) => {
+                    const start = landmarks[startIdx];
+                    const end = landmarks[endIdx];
+
+                    if (start.visibility > 0.5 && end.visibility > 0.5) {
+                        ctx.beginPath();
+                        ctx.moveTo(start.x * canvas.width, start.y * canvas.height);
+                        ctx.lineTo(end.x * canvas.width, end.y * canvas.height);
+                        ctx.strokeStyle = "blue";
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                });
+
+                landmarks.forEach((landmark, index) => {
+                    ctx.beginPath();
+                    ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 5, 0, 2 * Math.PI);
+
+                    if (index === 2 || index === 5) {
+                        ctx.fillStyle = "yellow"; // Eyes
+                    } else {
+                        ctx.fillStyle = "red"; // Other keypoints
+                    }
+
+                    ctx.fill();
+                });
             }
-
-            renderFrame();
         }
 
-        initializeBodyTracking();
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initializeBlazePose();
+        });
     </script>
 </body>
 </html>
