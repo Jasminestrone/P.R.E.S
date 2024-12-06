@@ -1,20 +1,128 @@
+.mt-4{
+  font-weight:750;
+}
+
+
+/* General Styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #f0f4f7, #ffffff);
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight:900;
+  color: #000000;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Flex Container */
 .flex-container {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: flex-start;
+  margin-top: 20px;
 }
 
+/* Camera Section */
 .camera-section {
+  flex: 1;
+  max-width: 640px;
   margin-right: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 10px;
 }
 
-.info-section {
-  flex: 1;
+#canvas {
+  border: none;
+  border-radius: 8px;
+  width: 100%;
 }
 
 .heatmap-container {
   margin-top: 20px;
-  width: 640px;
-  height: 480px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Info Section */
+.info-section {
+  flex: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.info-section h3 {
+  color: #555;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.info-section div {
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+button {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+  background-color: #007bff;
+  color: #fff;
+}
+
+button:hover {
+  background-color: #0056b3;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Progress Bar */
+progress {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e0e0e0;
+  margin-top: 5px;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #e0e0e0;
+}
+
+progress::-webkit-progress-value {
+  background-color: #007bff;
+}
+
+progress::-moz-progress-bar {
+  background-color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .flex-container {
+    flex-direction: column;
+  }
+
+  .camera-section {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
 }
