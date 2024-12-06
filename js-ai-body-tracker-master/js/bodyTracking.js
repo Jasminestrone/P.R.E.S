@@ -92,13 +92,16 @@ function onPoseResults(results) {
     if (results.poseLandmarks) {
         const landmarks = results.poseLandmarks;
 
-        // Extract landmarks
         const leftShoulder = landmarks[11];
         const rightShoulder = landmarks[12];
         const leftHip = landmarks[23];
         const rightHip = landmarks[24];
         const leftEar = landmarks[7];
         const rightEar = landmarks[8];
+
+        // **NEW**: Incorporate knees
+        const leftKnee = landmarks[25];
+        const rightKnee = landmarks[26];
 
         // Check visibility
         if (
@@ -107,7 +110,9 @@ function onPoseResults(results) {
             leftHip.visibility < 0.5 ||
             rightHip.visibility < 0.5 ||
             leftEar.visibility < 0.5 ||
-            rightEar.visibility < 0.5
+            rightEar.visibility < 0.5 ||
+            leftKnee.visibility < 0.5 ||
+            rightKnee.visibility < 0.5
         ) {
             ctx.font = '16px Arial';
             ctx.fillStyle = 'red';
@@ -134,61 +139,108 @@ function onPoseResults(results) {
             z: (leftEar.z + rightEar.z) / 2,
         };
 
-        /*** Upper Back Vector ***/
-        const backVector = {
+        // **NEW**: Mid-knee point for lower spine reference
+        const midKnee = {
+            x: (leftKnee.x + rightKnee.x) / 2,
+            y: (leftKnee.y + rightKnee.y) / 2,
+            z: (leftKnee.z + rightKnee.z) / 2,
+        };
+
+        /*** Vectors for spine curvature ***/
+        const upperSpineVec = {
             x: midShoulder.x - midHip.x,
             y: midShoulder.y - midHip.y,
-            z: midShoulder.z - midHip.z,
+            z: midShoulder.z - midHip.z
         };
 
-        /*** Neck Vector ***/
-        const neckVector = {
-            x: midEar.x - midShoulder.x,
-            y: midEar.y - midShoulder.y,
-            z: midEar.z - midShoulder.z,
+        const lowerSpineVec = {
+            x: midHip.x - midKnee.x,
+            y: midHip.y - midKnee.y,
+            z: midHip.z - midKnee.z
         };
 
-        /*** Vertical Vector ***/
-        const verticalVector = { x: 0, y: -1, z: 0 };
+        // Calculate angle between upperSpineVec and lowerSpineVec
+        const dot = upperSpineVec.x * lowerSpineVec.x + upperSpineVec.y * lowerSpineVec.y + upperSpineVec.z * lowerSpineVec.z;
+        const magU = Math.sqrt(upperSpineVec.x**2 + upperSpineVec.y**2 + upperSpineVec.z**2);
+        const magL = Math.sqrt(lowerSpineVec.x**2 + lowerSpineVec.y**2 + lowerSpineVec.z**2);
 
-        /*** Angle between Upper Back Vector and Vertical ***/
-        const backAngleRadians = Math.acos(
-            (backVector.x * verticalVector.x +
-                backVector.y * verticalVector.y +
-                backVector.z * verticalVector.z) /
-                (Math.sqrt(backVector.x ** 2 + backVector.y ** 2 + backVector.z ** 2) * 1)
-        );
-        const backAngleDegrees = (backAngleRadians * 180) / Math.PI;
+        let spineAngleDegrees = 0;
+        if (magU > 0 && magL > 0) {
+            const spineAngleRadians = Math.acos(dot / (magU * magL));
+            spineAngleDegrees = spineAngleRadians * (180 / Math.PI);
+        }
 
-        /*** Angle between Neck Vector and Vertical ***/
-        const neckAngleRadians = Math.acos(
-            (neckVector.x * verticalVector.x +
-                neckVector.y * verticalVector.y +
-                neckVector.z * verticalVector.z) /
-                (Math.sqrt(neckVector.x ** 2 + neckVector.y ** 2 + neckVector.z ** 2) * 1)
-        );
-        const neckAngleDegrees = (neckAngleRadians * 180) / Math.PI;
+        // Orientation check
+        const shoulderXDiff = Math.abs(leftShoulder.x - rightShoulder.x);
+        const shoulderZDiff = Math.abs(leftShoulder.z - rightShoulder.z);
+        const isFacingFront = shoulderXDiff > shoulderZDiff;
 
-        /*** Posture Assessment ***/
-        const backAngleThreshold = 10; // Adjust based on testing
-        const neckAngleThreshold = 15; // Adjust based on testing
+        // Existing posture detection (front vs side)
+        // We'll integrate spine angle checks for slouching
+        let postureStatus;
 
-        const isBackStraight = backAngleDegrees < backAngleThreshold;
-        const isNeckStraight = neckAngleDegrees < neckAngleThreshold;
+        if (!isFacingFront) {
+            // Side-facing
+            // Keep your previous angle calculations for side posture:
+            const verticalVector = { x: 0, y: -1, z: 0 };
 
-        const postureStatus = isBackStraight && isNeckStraight ? 'Good Posture' : 'Bad Posture';
+            // Back angle relative to vertical
+            const backVector = {
+                x: midShoulder.x - midHip.x,
+                y: midShoulder.y - midHip.y,
+                z: midShoulder.z - midHip.z,
+            };
+
+            const neckVector = {
+                x: midEar.x - midShoulder.x,
+                y: midEar.y - midShoulder.y,
+                z: midEar.z - midShoulder.z,
+            };
+
+            function angleWithVertical(vec) {
+                const dotV = vec.x * verticalVector.x + vec.y * verticalVector.y + vec.z * verticalVector.z;
+                const magVec = Math.sqrt(vec.x**2 + vec.y**2 + vec.z**2);
+                return magVec > 0 ? Math.acos(dotV / magVec) * (180 / Math.PI) : 0;
+            }
+
+            const backAngleDegrees = angleWithVertical(backVector);
+            const neckAngleDegrees = angleWithVertical(neckVector);
+
+            const backAngleThreshold = 20; 
+            const neckAngleThreshold = 25;
+
+            // **NEW**: Integrate spine angle to detect slouch
+            // If spine curvature angle (spineAngleDegrees) is large, it suggests slouching
+            const spineSlouchThreshold = 15; // Adjust as needed
+            const isNotSlouching = spineAngleDegrees < spineSlouchThreshold;
+
+            const isBackStraight = backAngleDegrees < backAngleThreshold;
+            const isNeckStraight = neckAngleDegrees < neckAngleThreshold;
+
+            // All conditions must be met for good posture:
+            // upright back, straight neck, and low spine curvature angle
+            postureStatus = (isBackStraight && isNeckStraight && isNotSlouching) ? 'Good Posture' : 'Bad Posture';
+
+        } else {
+            // Front-facing
+            const earShoulderHorizDiff = Math.abs(midEar.x - midShoulder.x);
+            const earForwardThreshold = 0.02;
+            
+            // **NEW**: Consider slouching as increased spine curvature here as well
+            // If the person is facing front and slouching, the spineAngleDegrees should catch that
+            const spineSlouchThreshold = 15; // Adjust based on how sensitive you want it
+            const isNotSlouching = spineAngleDegrees < spineSlouchThreshold;
+            const isHeadNotForward = earShoulderHorizDiff < earForwardThreshold;
+
+            postureStatus = (isHeadNotForward && isNotSlouching) ? 'Good Posture' : 'Bad Posture';
+        }
 
         // Display posture status
         ctx.font = '16px Arial';
         ctx.fillStyle = 'red';
         ctx.fillText(`Posture: ${postureStatus}`, 10, 30);
 
-        // Log angles for debugging
-        console.log('Back Angle:', backAngleDegrees.toFixed(2));
-        console.log('Neck Angle:', neckAngleDegrees.toFixed(2));
-        console.log('Posture Status:', postureStatus);
-
-        /*** Visualization ***/
+        // Visualization
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
 
@@ -199,19 +251,18 @@ function onPoseResults(results) {
             };
         }
 
-        // Draw back vector
         const pixelMidHip = toPixelCoords(midHip);
         const pixelMidShoulder = toPixelCoords(midShoulder);
+        const pixelMidEar = toPixelCoords(midEar);
+        const pixelMidKnee = toPixelCoords(midKnee);
 
+        // Draw lines for reference
         ctx.beginPath();
         ctx.moveTo(pixelMidHip.x, pixelMidHip.y);
         ctx.lineTo(pixelMidShoulder.x, pixelMidShoulder.y);
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 2;
         ctx.stroke();
-
-        // Draw neck vector
-        const pixelMidEar = toPixelCoords(midEar);
 
         ctx.beginPath();
         ctx.moveTo(pixelMidShoulder.x, pixelMidShoulder.y);
@@ -220,7 +271,15 @@ function onPoseResults(results) {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw vertical lines for reference
+        // Draw lower spine line (hip to knee)
+        ctx.beginPath();
+        ctx.moveTo(pixelMidHip.x, pixelMidHip.y);
+        ctx.lineTo(pixelMidKnee.x, pixelMidKnee.y);
+        ctx.strokeStyle = 'purple';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Vertical reference lines
         ctx.beginPath();
         ctx.moveTo(pixelMidHip.x, pixelMidHip.y);
         ctx.lineTo(pixelMidHip.x, 0);
@@ -235,12 +294,11 @@ function onPoseResults(results) {
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Extract key landmarks for eye
+        // Extract eye and nose landmarks
         const leftEye = landmarks[2];
         const rightEye = landmarks[5];
         const nose = landmarks[0];
 
-        // Calculate vectors for head orientation
         const eyeVector = {
             x: rightEye.x - leftEye.x,
             y: rightEye.y - leftEye.y,
@@ -253,54 +311,40 @@ function onPoseResults(results) {
             z: nose.z - (leftEye.z + rightEye.z) / 2,
         };
 
-        // Estimate gaze direction
+        // Gaze calculation
         const gazeX = (leftEye.x + rightEye.x) / 2;
         const gazeY = (leftEye.y + rightEye.y) / 2;
         const gazeZ = (leftEye.z + rightEye.z) / 2;
-
-        // Add the gaze point to the array
         gazePoints.push({ x: gazeX, y: gazeY, z: gazeZ });
 
-        // Update the heatmap every 30 frames
         if (gazePoints.length % 30 === 0) {
             update3DHeatmap();
         }
 
-        // Calculate Yaw (rotation around vertical axis)
+        // Head orientation angles
         const yaw = Math.atan2(eyeVector.z, eyeVector.x) * (180 / Math.PI);
-
-        // Calculate Pitch (rotation around horizontal axis)
         const pitch = Math.atan2(noseVector.z, noseVector.y) * (180 / Math.PI);
-
-        // Calculate Roll (tilt)
         const roll = Math.atan2(eyeVector.y, eyeVector.x) * (180 / Math.PI);
 
-        // Normalize angles to 0–360 degrees
         const normalizeAngle = (angle) => (angle < 0 ? angle + 360 : angle);
         const yaw360 = normalizeAngle(yaw);
         const pitch360 = normalizeAngle(pitch);
         const roll360 = normalizeAngle(roll);
 
-        // Log angles
-        console.log(`Yaw: ${yaw360.toFixed(2)}°`);
-        console.log(`Pitch: ${pitch360.toFixed(2)}°`);
-        console.log(`Roll: ${roll360.toFixed(2)}°`);
-
-        // Display coords and angles on the webpage
         document.getElementById('leftEyeCoords').textContent = `x: ${leftEye.x.toFixed(2)}, y: ${leftEye.y.toFixed(2)}, z: ${leftEye.z.toFixed(2)}`;
         document.getElementById('rightEyeCoords').textContent = `x: ${rightEye.x.toFixed(2)}, y: ${rightEye.y.toFixed(2)}, z: ${rightEye.z.toFixed(2)}`;
         document.getElementById('headAngleInfo').textContent = `Yaw: ${yaw360.toFixed(2)}°, Pitch: ${pitch360.toFixed(2)}°, Roll: ${roll360.toFixed(2)}°`;
 
-        // Draw skeleton connections and keypoints
+        // Skeleton drawing
         const keypointConnections = [
             // Face connections
-            [0, 1], [1, 2], [2, 3], // Left Eye connections
-            [0, 4], [4, 5], [5, 6], // Right Eye connections
-            [1, 7], [4, 8],         // Nose to ears
-            [9, 10],                // Mouth connections
+            [0, 1], [1, 2], [2, 3],
+            [0, 4], [4, 5], [5, 6],
+            [1, 7], [4, 8],
+            [9, 10],
             // Body connections
-            [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], // Arms
-            [11, 23], [12, 24], [23, 24], // Torso
+            [11, 12], [11, 13], [13, 15], [12, 14], [14, 16],
+            [11, 23], [12, 24], [23, 24]
         ];
 
         keypointConnections.forEach(([startIdx, endIdx]) => {
@@ -326,7 +370,6 @@ function onPoseResults(results) {
             } else {
                 ctx.fillStyle = "red"; // Other keypoints
             }
-
             ctx.fill();
         });
     }
