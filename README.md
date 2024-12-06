@@ -1,5 +1,5 @@
 # P.R.E.S
-Release: **beta1** | build: **2024.12.01**
+Release: **beta 2** | build: **2024.12.06**
 
 ## Features
 ## Live demo
