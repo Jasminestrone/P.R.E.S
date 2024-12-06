@@ -1,6 +1,41 @@
 // Array to store gaze data
 let gazePoints = [];
 
+// Arrays and variables for smoothing and hysteresis
+let spineAngleHistory = [];
+const SMOOTHING_WINDOW = 10;
+
+function getSmoothedAngle(newAngle) {
+    spineAngleHistory.push(newAngle);
+    if (spineAngleHistory.length > SMOOTHING_WINDOW) {
+        spineAngleHistory.shift();
+    }
+    const sum = spineAngleHistory.reduce((a, b) => a + b, 0);
+    return sum / spineAngleHistory.length;
+}
+
+// Variables for consecutive frame confirmation
+let badFrames = 0;
+let goodFrames = 0;
+let displayedPosture = "Good Posture";
+
+function updatePostureStatus(currentAssessment) {
+    if (currentAssessment === "Bad Posture") {
+        badFrames++;
+        goodFrames = 0; 
+        if (badFrames >= 3) { // Requires 3 consecutive "Bad" frames to switch
+            displayedPosture = "Bad Posture";
+        }
+    } else {
+        goodFrames++;
+        badFrames = 0; 
+        if (goodFrames >= 3) { // Requires 3 consecutive "Good" frames to switch
+            displayedPosture = "Good Posture";
+        }
+    }
+    return displayedPosture;
+}
+
 function update3DHeatmap() {
     const heatmap = document.getElementById('heatmap');
 
@@ -98,8 +133,6 @@ function onPoseResults(results) {
         const rightHip = landmarks[24];
         const leftEar = landmarks[7];
         const rightEar = landmarks[8];
-
-        // **NEW**: Incorporate knees
         const leftKnee = landmarks[25];
         const rightKnee = landmarks[26];
 
@@ -139,27 +172,25 @@ function onPoseResults(results) {
             z: (leftEar.z + rightEar.z) / 2,
         };
 
-        // **NEW**: Mid-knee point for lower spine reference
         const midKnee = {
             x: (leftKnee.x + rightKnee.x) / 2,
             y: (leftKnee.y + rightKnee.y) / 2,
             z: (leftKnee.z + rightKnee.z) / 2,
         };
 
-        /*** Vectors for spine curvature ***/
+        /*** Compute spine curvature angle ***/
         const upperSpineVec = {
             x: midShoulder.x - midHip.x,
             y: midShoulder.y - midHip.y,
-            z: midShoulder.z - midHip.z
+            z: midShoulder.z - midHip.z,
         };
 
         const lowerSpineVec = {
             x: midHip.x - midKnee.x,
             y: midHip.y - midKnee.y,
-            z: midHip.z - midKnee.z
+            z: midHip.z - midKnee.z,
         };
 
-        // Calculate angle between upperSpineVec and lowerSpineVec
         const dot = upperSpineVec.x * lowerSpineVec.x + upperSpineVec.y * lowerSpineVec.y + upperSpineVec.z * lowerSpineVec.z;
         const magU = Math.sqrt(upperSpineVec.x**2 + upperSpineVec.y**2 + upperSpineVec.z**2);
         const magL = Math.sqrt(lowerSpineVec.x**2 + lowerSpineVec.y**2 + lowerSpineVec.z**2);
@@ -170,21 +201,26 @@ function onPoseResults(results) {
             spineAngleDegrees = spineAngleRadians * (180 / Math.PI);
         }
 
+        // Smooth the spine angle over multiple frames
+        const smoothedSpineAngle = getSmoothedAngle(spineAngleDegrees);
+
         // Orientation check
         const shoulderXDiff = Math.abs(leftShoulder.x - rightShoulder.x);
         const shoulderZDiff = Math.abs(leftShoulder.z - rightShoulder.z);
         const isFacingFront = shoulderXDiff > shoulderZDiff;
 
-        // Existing posture detection (front vs side)
-        // We'll integrate spine angle checks for slouching
         let postureStatus;
 
         if (!isFacingFront) {
             // Side-facing
-            // Keep your previous angle calculations for side posture:
             const verticalVector = { x: 0, y: -1, z: 0 };
 
-            // Back angle relative to vertical
+            function angleWithVertical(vec) {
+                const dotV = vec.x * verticalVector.x + vec.y * verticalVector.y + vec.z * verticalVector.z;
+                const magVec = Math.sqrt(vec.x**2 + vec.y**2 + vec.z**2);
+                return magVec > 0 ? Math.acos(dotV / magVec) * (180 / Math.PI) : 0;
+            }
+
             const backVector = {
                 x: midShoulder.x - midHip.x,
                 y: midShoulder.y - midHip.y,
@@ -197,42 +233,34 @@ function onPoseResults(results) {
                 z: midEar.z - midShoulder.z,
             };
 
-            function angleWithVertical(vec) {
-                const dotV = vec.x * verticalVector.x + vec.y * verticalVector.y + vec.z * verticalVector.z;
-                const magVec = Math.sqrt(vec.x**2 + vec.y**2 + vec.z**2);
-                return magVec > 0 ? Math.acos(dotV / magVec) * (180 / Math.PI) : 0;
-            }
-
             const backAngleDegrees = angleWithVertical(backVector);
             const neckAngleDegrees = angleWithVertical(neckVector);
 
             const backAngleThreshold = 20; 
             const neckAngleThreshold = 25;
-
-            // **NEW**: Integrate spine angle to detect slouch
-            // If spine curvature angle (spineAngleDegrees) is large, it suggests slouching
             const spineSlouchThreshold = 15; // Adjust as needed
-            const isNotSlouching = spineAngleDegrees < spineSlouchThreshold;
 
+            const isNotSlouching = smoothedSpineAngle < spineSlouchThreshold;
             const isBackStraight = backAngleDegrees < backAngleThreshold;
             const isNeckStraight = neckAngleDegrees < neckAngleThreshold;
 
-            // All conditions must be met for good posture:
-            // upright back, straight neck, and low spine curvature angle
-            postureStatus = (isBackStraight && isNeckStraight && isNotSlouching) ? 'Good Posture' : 'Bad Posture';
+            // Determine posture before consecutive frame check
+            const currentAssessment = (isBackStraight && isNeckStraight && isNotSlouching) ? 'Good Posture' : 'Bad Posture';
+
+            postureStatus = updatePostureStatus(currentAssessment);
 
         } else {
             // Front-facing
             const earShoulderHorizDiff = Math.abs(midEar.x - midShoulder.x);
             const earForwardThreshold = 0.02;
-            
-            // **NEW**: Consider slouching as increased spine curvature here as well
-            // If the person is facing front and slouching, the spineAngleDegrees should catch that
-            const spineSlouchThreshold = 15; // Adjust based on how sensitive you want it
-            const isNotSlouching = spineAngleDegrees < spineSlouchThreshold;
+            const spineSlouchThreshold = 15; 
+
+            const isNotSlouching = smoothedSpineAngle < spineSlouchThreshold;
             const isHeadNotForward = earShoulderHorizDiff < earForwardThreshold;
 
-            postureStatus = (isHeadNotForward && isNotSlouching) ? 'Good Posture' : 'Bad Posture';
+            const currentAssessment = (isHeadNotForward && isNotSlouching) ? 'Good Posture' : 'Bad Posture';
+
+            postureStatus = updatePostureStatus(currentAssessment);
         }
 
         // Display posture status
@@ -256,7 +284,7 @@ function onPoseResults(results) {
         const pixelMidEar = toPixelCoords(midEar);
         const pixelMidKnee = toPixelCoords(midKnee);
 
-        // Draw lines for reference
+        // Draw lines for spine
         ctx.beginPath();
         ctx.moveTo(pixelMidHip.x, pixelMidHip.y);
         ctx.lineTo(pixelMidShoulder.x, pixelMidShoulder.y);
