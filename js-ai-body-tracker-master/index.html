@@ -198,52 +198,148 @@
             if (results.poseLandmarks) {
                 const landmarks = results.poseLandmarks;
 
-                // Extract key landmarks for waist, shoulders, and knees
-            const leftShoulder = landmarks[11];
-            const leftWaist = landmarks[23];
-            const leftKnee = landmarks[25];
+                // Extract landmarks
+                const leftShoulder = landmarks[11];
+                const rightShoulder = landmarks[12];
+                const leftHip = landmarks[23];
+                const rightHip = landmarks[24];
+                const leftEar = landmarks[7];
+                const rightEar = landmarks[8];
 
-            // Calculate vector from waist to shoulder
-            const waistToShoulderVector = {
-                x: leftShoulder.x - leftWaist.x,
-                y: leftShoulder.y - leftWaist.y,
-                z: leftShoulder.z - leftWaist.z,
-            };
+                // Check visibility
+                if (
+                    leftShoulder.visibility < 0.5 ||
+                    rightShoulder.visibility < 0.5 ||
+                    leftHip.visibility < 0.5 ||
+                    rightHip.visibility < 0.5 ||
+                    leftEar.visibility < 0.5 ||
+                    rightEar.visibility < 0.5
+                ) {
+                    ctx.font = '16px Arial';
+                    ctx.fillStyle = 'red';
+                    ctx.fillText(`Pose not fully detected`, 10, 30);
+                    return;
+                }
 
-            // Calculate vector from waist to knee
-            const waistToKneeVector = {
-                x: leftKnee.x - leftWaist.x,
-                y: leftKnee.y - leftWaist.y,
-                z: leftKnee.z - leftWaist.z,
-            };
+                // Calculate midpoints
+                const midShoulder = {
+                    x: (leftShoulder.x + rightShoulder.x) / 2,
+                    y: (leftShoulder.y + rightShoulder.y) / 2,
+                    z: (leftShoulder.z + rightShoulder.z) / 2,
+                };
 
-            // Function to calculate magnitude of a vector
-            function magnitude(vector) {
-                return Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
-            }
+                const midHip = {
+                    x: (leftHip.x + rightHip.x) / 2,
+                    y: (leftHip.y + rightHip.y) / 2,
+                    z: (leftHip.z + rightHip.z) / 2,
+                };
 
-            // Function to calculate dot product of two vectors
-            function dotProduct(vector1, vector2) {
-                return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
-            }
+                const midEar = {
+                    x: (leftEar.x + rightEar.x) / 2,
+                    y: (leftEar.y + rightEar.y) / 2,
+                    z: (leftEar.z + rightEar.z) / 2,
+                };
 
-            // Calculate the dot product of the two vectors
-            const dot = dotProduct(waistToShoulderVector, waistToKneeVector);
+                /*** Upper Back Vector ***/
+                const backVector = {
+                    x: midShoulder.x - midHip.x,
+                    y: midShoulder.y - midHip.y,
+                    z: midShoulder.z - midHip.z,
+                };
 
-            // Calculate the magnitudes of the vectors
-            const magnitudeShoulder = magnitude(waistToShoulderVector);
-            const magnitudeKnee = magnitude(waistToKneeVector);
+                /*** Neck Vector ***/
+                const neckVector = {
+                    x: midEar.x - midShoulder.x,
+                    y: midEar.y - midShoulder.y,
+                    z: midEar.z - midShoulder.z,
+                };
 
-            // Calculate the angle in radians
-            const angleRadians = Math.acos(dot / (magnitudeShoulder * magnitudeKnee));
+                /*** Vertical Vector ***/
+                const verticalVector = { x: 0, y: -1, z: 0 };
 
-            // Convert to degrees if needed
-            const angleDegrees = angleRadians * (180 / Math.PI);
+                /*** Angle between Upper Back Vector and Vertical ***/
+                const backAngleRadians = Math.acos(
+                    (backVector.x * verticalVector.x +
+                        backVector.y * verticalVector.y +
+                        backVector.z * verticalVector.z) /
+                        (Math.sqrt(backVector.x ** 2 + backVector.y ** 2 + backVector.z ** 2) * 1)
+                );
+                const backAngleDegrees = (backAngleRadians * 180) / Math.PI;
 
-            // Log the angle
-            console.log('Angle at waist:', angleDegrees.toFixed(2));
+                /*** Angle between Neck Vector and Vertical ***/
+                const neckAngleRadians = Math.acos(
+                    (neckVector.x * verticalVector.x +
+                        neckVector.y * verticalVector.y +
+                        neckVector.z * verticalVector.z) /
+                        (Math.sqrt(neckVector.x ** 2 + neckVector.y ** 2 + neckVector.z ** 2) * 1)
+                );
+                const neckAngleDegrees = (neckAngleRadians * 180) / Math.PI;
 
+                /*** Posture Assessment ***/
+                const backAngleThreshold = 10; // Adjust based on testing
+                const neckAngleThreshold = 15; // Adjust based on testing
 
+                const isBackStraight = backAngleDegrees < backAngleThreshold;
+                const isNeckStraight = neckAngleDegrees < neckAngleThreshold;
+
+                const postureStatus = isBackStraight && isNeckStraight ? 'Good Posture' : 'Bad Posture';
+
+                // Display posture status
+                ctx.font = '16px Arial';
+                ctx.fillStyle = 'red';
+                ctx.fillText(`Posture: ${postureStatus}`, 10, 30);
+
+                // Log angles for debugging
+                console.log('Back Angle:', backAngleDegrees.toFixed(2));
+                console.log('Neck Angle:', neckAngleDegrees.toFixed(2));
+                console.log('Posture Status:', postureStatus);
+
+                /*** Visualization ***/
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+
+                function toPixelCoords(point) {
+                    return {
+                        x: point.x * canvasWidth,
+                        y: point.y * canvasHeight,
+                    };
+                }
+
+                // Draw back vector
+                const pixelMidHip = toPixelCoords(midHip);
+                const pixelMidShoulder = toPixelCoords(midShoulder);
+
+                ctx.beginPath();
+                ctx.moveTo(pixelMidHip.x, pixelMidHip.y);
+                ctx.lineTo(pixelMidShoulder.x, pixelMidShoulder.y);
+                ctx.strokeStyle = 'blue';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw neck vector
+                const pixelMidEar = toPixelCoords(midEar);
+
+                ctx.beginPath();
+                ctx.moveTo(pixelMidShoulder.x, pixelMidShoulder.y);
+                ctx.lineTo(pixelMidEar.x, pixelMidEar.y);
+                ctx.strokeStyle = 'orange';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw vertical lines for reference
+                ctx.beginPath();
+                ctx.moveTo(pixelMidHip.x, pixelMidHip.y);
+                ctx.lineTo(pixelMidHip.x, 0);
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(pixelMidShoulder.x, pixelMidShoulder.y);
+                ctx.lineTo(pixelMidShoulder.x, 0);
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 1;
+                ctx.stroke();
 
                 // Extract key landmarks for eye
                 const leftEye = landmarks[2];
@@ -296,8 +392,8 @@
                     [1, 7], [4, 8],         // Nose to ears
                     [9, 10],                // Mouth connections
                     // Body connections
-                    [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], // Legs
-                    [11, 23], [12, 24], [23, 24], [23, 25], [24, 26]  // Upper body
+                    [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], // Arms
+                    [11, 23], [12, 24], [23, 24], // Torso
                 ];
 
                 keypointConnections.forEach(([startIdx, endIdx]) => {
@@ -328,8 +424,6 @@
                 });
             }
         }
-
-
 
         document.addEventListener("DOMContentLoaded", () => {
             initializeBlazePose();
