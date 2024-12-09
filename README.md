@@ -3,7 +3,7 @@ Release: **beta 2** | build: **2024.12.06**
 
 ## Features
 ## Demo
-Full interactive demo is now avaliable at [https://presnuvu.netlify.app/js-ai-body-tracker-master/index.html](https://presnuvu.netlify.app/js-ai-body-tracker-master/index.html)
+Full interactive demo is now avaliable [here](https://presnuvu.netlify.app/js-ai-body-tracker-master/index.html)!
 ## Basic usage
 ### Examples of use
 ## Changelog
