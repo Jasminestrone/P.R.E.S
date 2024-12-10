@@ -1,16 +1,22 @@
 let isRunning = false;
+let observationComplete = false;
 
 function startCode() {
-    if (!isRunning) {
-        isRunning = true;
-        console.log("Code started");
+    if (!observationComplete) {
+        if (!isRunning) {
+            isRunning = true;
+            console.log("Code started");
+        }
     }
 }
 
 function stopCode() {
-    if (isRunning) {
-        isRunning = false;
-        console.log("Code stopped");
+    if (!observationComplete) {
+        if (isRunning) {
+            isRunning = false;
+            observationComplete = true;
+            console.log("Code stopped");
+        }
     }
 }
 
