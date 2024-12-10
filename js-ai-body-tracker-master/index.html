@@ -30,7 +30,8 @@
             <!-- Buttons and Text Section -->
             <div class="info-section">
                 <!-- Voice Input Section -->
-                <button id="startButton" class="btn btn-primary mt-3">Start Voice Input</button>
+                <button id="startButton" class="btn btn-primary mt-3" style="margin-right: 16px">Start Voice Input</button>
+                <button id="volStartButton" class="btn btn-info mt-3">Start Volume Detection</button>
                 <div id="output" class="mt-3"></div>
                 
                 <!-- Volume Display Section -->
@@ -63,6 +64,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.2.min.js"></script>
+
+    <!-- Start & Stop Code -->
+    <script src="js/isCodeOn.js"></script>
 
     <!-- Voice Recognition -->
     <script src="js/voiceRecognition.js"></script>

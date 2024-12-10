@@ -5,6 +5,7 @@ let volumeMeterEl = document.getElementById("volumeMeter");
 let volumeLevelEl = document.getElementById("volumeLevel");
 
 async function startVolumeDetection() {
+    if (!isRunning) return;
     try {
         // Request microphone access
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -33,6 +34,7 @@ function monitorVolume() {
     const dataArray = new Uint8Array(bufferLength);
 
     function checkVolume() {
+        if (!isRunning) return;
         analyserNode.getByteTimeDomainData(dataArray);
         
         // Calculate a rough volume measurement (RMS)
@@ -53,9 +55,7 @@ function monitorVolume() {
     checkVolume();
 }
 
-// If you want volume detection to start automatically when you start voice input,
-// you can call startVolumeDetection() from within your voiceRecognition.js start handler.
-// Otherwise, you can attach it to the Start Voice Input button:
-document.getElementById("startButton").addEventListener("click", () => {
+// Wait for button input
+document.getElementById("volStartButton").addEventListener("click", () => {
     startVolumeDetection();
 });
