@@ -4,7 +4,7 @@ Release: **beta 2** | build: **2024.12.06**
 ## Features
 - Hand tracking
 - Eye tracking
-- Filler word dection, coming soon^TM
+- Filler word dection, coming soon™
 ## Demo
 Full interactive demo is now avaliable [here](https://presnuvu.netlify.app/js-ai-body-tracker-master/index.html)!
 ## Basic usage
