@@ -126,3 +126,57 @@ progress::-moz-progress-bar {
     margin-bottom: 20px;
   }
 }
+
+/* Add these styles */
+.stats-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-item {
+    margin-bottom: 15px;
+}
+
+.progress {
+    height: 10px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #007bff;
+    transition: width 0.3s ease;
+}
+
+.github-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.github-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #24292e;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.github-link:hover {
+    background: #2f363d;
+    color: white;
+    text-decoration: none;
+}
+
+.commit-count {
+    font-size: 0.9rem;
+    color: #666;
+}
