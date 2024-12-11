@@ -10,7 +10,7 @@ async function fetchGitHubInfo() {
         
         // Fetch commits from multiple pages
         let totalCommits = 0;
-        for (let page = 1; page <= 10; page++) {
+        for (let page = 1; page <= 25; page++) {
             const commitsResponse = await fetch(
                 `https://api.github.com/repos/${owner}/${repo}/commits?page=${page}&per_page=100`
             );
