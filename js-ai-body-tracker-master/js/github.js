@@ -8,15 +8,26 @@ async function fetchGitHubInfo() {
         const repoResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
         const repoData = await repoResponse.json();
         
-        // Fetch all commits and count 'committer' occurrences
-        const commitsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits`);
-        const commitsData = await commitsResponse.json();
-        const commitsText = JSON.stringify(commitsData);    
-        const committerCount = (commitsText.match(/committer/g) || []).length;
-        const totalCount = committerCount + 2;
+        // Fetch commits from multiple pages
+        let totalCommits = 0;
+        for (let page = 1; page <= 10; page++) {
+            const commitsResponse = await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/commits?page=${page}&per_page=100`
+            );
+            const commitsData = await commitsResponse.json();
+            
+            // Break if no more commits are found
+            if (!commitsData || commitsData.length === 0) break;
+            
+            const commitsText = JSON.stringify(commitsData);    
+            const committerCount = (commitsText.match(/committer/g) || []).length;
+            totalCommits += committerCount;
+        }
+        
+        totalCommits = totalCommits / 2 +- 1;
         
         document.getElementById('commitCount').textContent = 
-            `${repoData.stargazers_count} Stars | ${totalCount} Commits`;
+            `${repoData.stargazers_count} Stars | ${totalCommits} Commits`;
     } catch (error) {
         console.error('Error fetching GitHub info:', error);
         document.getElementById('commitCount').textContent = 'Unable to load stats';
