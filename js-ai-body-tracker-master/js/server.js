@@ -50,8 +50,8 @@ app.get("/", (req, res) => {
 
         console.log("Query successful:", rows);
 
+        // Handle empty database case
         if (rows.length === 0) {
-            // Handle empty database case
             console.log("No data found in the posture_data table.");
             res.send(`
                 <!DOCTYPE html>
@@ -144,6 +144,7 @@ app.get("/", (req, res) => {
         }
     });
 });
+
 
 // Start the server
 app.listen(PORT, () => {

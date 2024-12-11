@@ -10,6 +10,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
+
+    <h1>Posture Data</h1>
+    <div id="data-container">
+        Loading data...
+    </div>
+
+    <script>
+        // Fetch data from the server
+        fetch("http://localhost:3000")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.text(); // Expecting HTML response
+            })
+            .then(data => {
+                document.getElementById("data-container").innerHTML = data;
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                document.getElementById("data-container").innerHTML = `<p style="color: red;">Error loading data: ${error.message}</p>`;
+            });
+    </script>
+
     <div class="container">
         <h1 class="mt-4 text-center">P.R.E.S</h1>
     <div class="mt-4 text-center">
