@@ -8,8 +8,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
+    </head>
 <body>
+    <div class="tutorial-overlay"></div>
+    <div id="tutorial-modal" class="tutorial-popup">
+        <div class="tutorial-content">
+            <h3>Welcome to P.R.E.S! 👋</h3>
+            <h6>Presentation Recognition and Enhancement Software</h6>
+            <div class="tutorial-steps">
+                <p>1. Click "Start Presentation" to begin tracking</p>
+                <p>2. Enable camera and microphone when prompted</p>
+                <p>3. Use "Start Voice Input" to track speech patterns</p>
+                <p>4. Monitor your body language and volume in real-time</p>
+                <p class="center_snaps"><b>Remember:</b> PRES is just a tool for assisting with your presenting, your slides should only be there to support your words, and you should <b>NEVER</b> read off your slides</p>
+            </div>
+            <button id="closeTutorial" class="btn btn-primary">Got it!</button>
+        </div>
+    </div>
+
     <div class="container">
         <h1 class="mt-4 text-center">P.R.E.S</h1>
 
@@ -33,6 +49,10 @@
         <div class="flex-container">
             <!-- Camera Output Section -->
             <div class="camera-section">
+                <div class="camera-placeholder">
+                    <img src="pres.png" alt="Camera placeholder">
+                    <p>Click "Start Presentation" to begin tracking</p>
+                </div>
                 <canvas id="canvas" width="640" height="480" style="border: 1px solid black;"></canvas>
                 <!-- Heatmap Container -->
                 <div id="heatmap" class="heatmap-container"></div>
@@ -107,5 +127,7 @@
     <script src="js/bodyTracking.js"></script>
     <!-- Github trakcing shit-->
     <script src="js/github.js"></script>
+
+    <script src="js/index.js"></script>
 </body>
 </html>
