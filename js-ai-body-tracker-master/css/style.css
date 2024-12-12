@@ -126,3 +126,82 @@ progress::-moz-progress-bar {
     margin-bottom: 20px;
   }
 }
+
+/* Add these styles */
+.stats-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-item {
+    margin-bottom: 15px;
+}
+
+.progress {
+    height: 10px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #007bff;
+    transition: width 0.3s ease;
+}
+
+.github-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.github-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #24292e;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.github-link:hover {
+    background: #2f363d;
+    color: white;
+    text-decoration: none;
+}
+
+.commit-count {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+#analysisCanvas {
+  position: fixed; /* Makes it cover the entire viewport */
+  top: -100%; /* Start hidden above the screen */
+  left: 0;
+  width: 100%;
+  height: 100%; /* Fullscreen height */
+  background: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  z-index: 9999; /* Ensure it appears above all other elements */
+  overflow-y: auto; /* Allows scrolling if content overflows */
+  transition: top 0.5s ease; /* Smooth sliding effect */
+}
+
+#analysisCanvas.visible-canvas {
+  top: 0; /* Slides down to cover the screen */
+}
+
+#analysisCanvas h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2em;
+  color: #333;
+}
