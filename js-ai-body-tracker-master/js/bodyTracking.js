@@ -444,7 +444,7 @@ function stopTrackingSession() {
     const metrics = calculateMetrics(); // Calculate metrics from postureLogs
 
     // Get the analysis canvas and update its content
-    const analysisCanvas = document.getElementById("analysisCanvas");
+    const analysisCanvas = document.getElementById("analysisContent");
     if (analysisCanvas) {
         analysisCanvas.innerHTML = `
             <h1>Observation Summary</h1>
