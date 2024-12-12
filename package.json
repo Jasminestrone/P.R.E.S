@@ -1,5 +1,29 @@
 {
   "dependencies": {
-    "pitchy": "^4.1.0"
-  }
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "node": "^23.4.0",
+    "pitchy": "^4.1.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  },
+  "name": "p.r.e.s",
+  "version": "1.0.0",
+  "description": "Release: **beta 2** | build: **2024.12.06**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jasminestrone/P.R.E.S.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jasminestrone/P.R.E.S/issues"
+  },
+  "homepage": "https://github.com/Jasminestrone/P.R.E.S#readme"
 }

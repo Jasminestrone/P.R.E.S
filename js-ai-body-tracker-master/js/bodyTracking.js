@@ -1,6 +1,21 @@
 // Array to store gaze data
 let gazePoints = [];
 
+/**
+ * Determines the current posture based on tracking data.
+ * Replace the placeholder logic with actual analysis using pose landmarks.
+ * @returns {string} - The assessed posture status.
+ */
+function determinePosture() {
+    // Placeholder logic: Randomly assigns a posture status.
+    // TODO: Replace with actual posture assessment logic based on tracking data.
+
+    const postures = ['Good Posture', 'Bad Posture', 'Neutral Posture'];
+    const randomIndex = Math.floor(Math.random() * postures.length);
+    return postures[randomIndex];
+}
+
+
 // Arrays and variables for smoothing and hysteresis
 let spineAngleHistory = [];
 const SMOOTHING_WINDOW = 10;
@@ -403,6 +418,96 @@ function onPoseResults(results) {
             });
         }
 }
+
+// Replace 'https://yourserverdomain.com/api/posture' with your actual server URL
+function sendPostureData(data) {
+    console.log('Sending posture data:', data); // Debug log
+    updateStatus('Sending posture data to server...'); // Update status to "Tracking"
+
+    fetch('http://localhost:3000/api/posture', { // Ensure this URL is correct
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Handle HTTP errors
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result.error) {
+            console.error('Error:', result.error);
+            updateStatus('Error logging posture.');
+        } else {
+            console.log(`Posture data inserted with row ID: ${result.rowId}`);
+            updateStatus(`Last posture logged: ${data.posture} at ${data.timestamp}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error sending data:', error);
+        updateStatus('Error sending posture data.');
+    });
+}
+
+
+
+/**
+ * Updates the status message displayed on the webpage with dynamic styling based on the message content.
+ * @param {string} message - The status message to display.
+ */
+function updateStatus(message) {
+    console.log('Updating status:', message); // Debug log
+    const statusElement = document.getElementById('status');
+    if (statusElement) {
+        statusElement.textContent = message;
+
+        // Change color based on message content
+        if (message.includes('Sending posture data')) {
+            statusElement.style.color = 'orange'; // Tracking
+        } else if (message.includes('Good Posture')) {
+            statusElement.style.color = 'green'; // Good
+        } else if (message.includes('Bad Posture')) {
+            statusElement.style.color = 'red'; // Bad
+        } else if (message.includes('Error')) {
+            statusElement.style.color = 'purple'; // Error
+        } else {
+            statusElement.style.color = 'blue'; // Default
+        }
+    } else {
+        console.warn('Status element not found in HTML.');
+    }
+}
+
+
+  
+// Function to log posture data
+function logPosture() {
+    const displayedPosture = determinePosture();
+    const timestamp = new Date().toISOString();
+    const userId = 1; // Replace with actual user identification logic
+
+    const postureData = {
+        userId,
+        posture: displayedPosture,
+        timestamp
+    };
+
+    console.log(`Logging posture: ${displayedPosture} at ${timestamp}`);
+    updateStatus(`Logging posture: ${displayedPosture} at ${timestamp}`);
+
+    sendPostureData(postureData);
+}
+
+// Log posture every minute
+const intervalMs = 60 * 1000; // 60,000 milliseconds = 1 minute
+setInterval(logPosture, intervalMs);
+
+// Initial log when the page loads
+window.onload = logPosture;  
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeBlazePose();

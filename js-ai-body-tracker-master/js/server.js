@@ -1,152 +1,66 @@
-const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+// js/server.js
+
+require('dotenv').config(); // Load environment variables
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors'); // Import CORS
+const path = require('path');
+const { insertPostureData, dbInstance } = require('./db'); // Correct path to db.js
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Correct database path
-const DATABASE_PATH = path.resolve(
-    __dirname,
-    "../databases",
-    "posture_data.db"
-);
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
 
-console.log("Starting server...");
-console.log(`Database path: ${DATABASE_PATH}`);
+// Enable CORS for all routes and origins (for development)
+app.use(cors());
 
-// Global error handlers
-process.on("uncaughtException", (err) => {
-    console.error("Unhandled Exception:", err);
+// Optional: Serve a welcome message at root
+app.get('/', (req, res) => {
+    res.send('Welcome to the P.R.E.S Posture Tracking API. Use /api/posture to POST data.');
 });
 
-process.on("unhandledRejection", (reason, promise) => {
-    console.error("Unhandled Rejection at:", promise, "reason:", reason);
-});
+// Endpoint to receive posture data
+app.post('/api/posture', (req, res) => {
+    const { userId, posture, timestamp } = req.body;
 
-// Serve HTML with data from the database
-app.get("/", (req, res) => {
-    console.log("Received request at /");
+    console.log('Received POST /api/posture with data:', req.body);
 
-    // Open the database
-    const db = new sqlite3.Database(DATABASE_PATH, (err) => {
+    // Basic validation
+    if (!userId || !posture || !timestamp) {
+        console.error('Validation Error: Missing required fields.');
+        return res.status(400).json({ error: 'Missing required fields: userId, posture, timestamp.' });
+    }
+
+    const postureData = { userId, posture, timestamp };
+
+    insertPostureData(postureData, (err, rowId) => {
         if (err) {
-            console.error("Error connecting to database:", err.message);
-            res.status(500).send(`<h1>Database connection error: ${err.message}</h1>`);
-            return;
+            console.error('Failed to insert posture data:', err.message);
+            return res.status(500).json({ error: 'Failed to insert data into the database.' });
         }
-
-        console.log("Connected to database successfully.");
-    });
-
-    // Query the database
-    const query = "SELECT * FROM posture_data;";
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            console.error("Error querying database:", err.message);
-            res.status(500).send(`<h1>Error querying database: ${err.message}</h1>`);
-            return;
-        }
-
-        console.log("Query successful:", rows);
-
-        // Handle empty database case
-        if (rows.length === 0) {
-            console.log("No data found in the posture_data table.");
-            res.send(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Posture Data</title>
-                </head>
-                <body>
-                    <h1>No Posture Data Available</h1>
-                    <p>The database is currently empty. Please start tracking data.</p>
-                </body>
-                </html>
-            `);
-            return;
-        }
-
-        // Generate HTML table from the query result
-        const tableRows = rows
-            .map(
-                (row) => `
-                <tr>
-                    <td>${row.id}</td>
-                    <td>${row.timestamp}</td>
-                    <td>${row.posture}</td>
-                    <td>${row.smoothed_spine_angle}</td>
-                    <td>${row.yaw}</td>
-                    <td>${row.pitch}</td>
-                    <td>${row.roll}</td>
-                </tr>`
-            )
-            .join("");
-
-        const html = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Posture Data</title>
-                <style>
-                    table {
-                        border-collapse: collapse;
-                        width: 100%;
-                        margin-top: 20px;
-                    }
-                    th, td {
-                        border: 1px solid #ddd;
-                        padding: 8px;
-                    }
-                    th {
-                        background-color: #f4f4f4;
-                        text-align: left;
-                    }
-                </style>
-            </head>
-            <body>
-                <h1>Posture Data</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Timestamp</th>
-                            <th>Posture</th>
-                            <th>Smoothed Spine Angle</th>
-                            <th>Yaw</th>
-                            <th>Pitch</th>
-                            <th>Roll</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableRows}
-                    </tbody>
-                </table>
-            </body>
-            </html>
-        `;
-
-        // Send the generated HTML
-        res.send(html);
-    });
-
-    // Close the database connection
-    db.close((err) => {
-        if (err) {
-            console.error("Error closing database:", err.message);
-        } else {
-            console.log("Database connection closed.");
-        }
+        console.log(`Posture data inserted successfully with row ID: ${rowId}`);
+        res.status(201).json({ message: 'Data inserted successfully.', rowId });
     });
 });
-
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// Handle graceful shutdown
+process.on('SIGINT', () => {
+    console.log('\nShutting down server...');
+    // Close the database connection gracefully
+    dbInstance.close((err) => {
+        if (err) {
+            console.error('Error closing the database connection:', err.message);
+        } else {
+            console.log('Database connection closed.');
+        }
+        process.exit(0);
+    });
 });
