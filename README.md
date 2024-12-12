@@ -16,7 +16,7 @@ P.R.E.S is designed to enhance your presentations by tracking body movements and
 3. Use "Start Voice Input" to track speech patterns
 4. Monitor your body language and volume in real-time
 
-Remember: PRES is just a tool for assisting with your presenting, your slides should only be there to support your words, and you should NEVER read off your slides
+**Remember:** PRES is just a tool for assisting with your presenting, your slides should only be there to support your words, and you should **NEVER read off your slides**
 
 ### Examples of Use
 - Use P.R.E.S during practice sessions to get feedback on your presentation skills.
@@ -26,8 +26,9 @@ Remember: PRES is just a tool for assisting with your presenting, your slides sh
 ## Changelog
 - Initial release with hand tracking, eye tracking, and basic functionality.
 - Many many bug fixes
+
 **Enjoy!**
 
-GNU3 License | 2024 Jasmine, Gabe, Bradley
+-# GNU3 License | 2024 Jasmine, Gabe, Bradley
 
-For more information and to contribute, visit our GitHub repository: [Presentation-Pal](https://github.com/Jasminestrone/Presentation-Pal)
+For more information and to contribute, visit our GitHub repository: [PRES](https://github.com/Jasminestrone/P.R.E.S)
