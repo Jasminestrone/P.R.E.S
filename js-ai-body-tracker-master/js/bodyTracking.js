@@ -5,6 +5,11 @@ let gazePoints = [];
 let postureLogs = [];
 let isTracking = false;
 let observationStartTime = null;
+let lastLogTime = 0;
+
+
+let lastTime = performance.now(); // Track the last time `onPoseResults` was called
+let elapsedTime = 0; // Accumulate elapsed time
 
 // Arrays and variables for smoothing and hysteresis
 let spineAngleHistory = [];
@@ -122,9 +127,29 @@ async function setupCamera() {
     return video;
 }
 
-function onPoseResults(results) {
 
+function onPoseResults(results) {
     
+    if (!isRunning || !results.poseLandmarks) return;
+
+    const currentTime = performance.now(); // Get the current time
+    const deltaTime = currentTime - lastTime; // Calculate time since the last frame
+    lastTime = currentTime; // Update the lastTime for the next frame
+
+    elapsedTime += deltaTime; // Accumulate elapsed time
+
+    // Log posture data only once per second (1000 ms)
+    if (elapsedTime >= 1000) {
+        elapsedTime = 0; // Reset elapsed time
+        postureLogs.push({
+            timestamp: new Date().toISOString(),
+            posture: displayedPosture, // Use the current posture
+        });
+        console.log(`Logged posture: ${displayedPosture}`);
+    }
+
+    // Existing posture detection logic
+
 
     const placeholder = document.querySelector('.camera-placeholder');
     if (!isRunning) {
