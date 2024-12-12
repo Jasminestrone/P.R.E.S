@@ -6,8 +6,6 @@ let postureLogs = [];
 let isTracking = false;
 let observationStartTime = null;
 
-
-
 // Arrays and variables for smoothing and hysteresis
 let spineAngleHistory = [];
 const SMOOTHING_WINDOW = 10;
