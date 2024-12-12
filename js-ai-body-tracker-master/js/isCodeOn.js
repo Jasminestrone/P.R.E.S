@@ -36,9 +36,13 @@ function stopCode() {
             observationComplete = true;
             buttonSwap();
 
+
+
             // Show the analysis canvas
             analysisCanvas.classList.remove("hidden-canvas");
             analysisCanvas.classList.add("visible-canvas");
+
+            stopTrackingSession(); // Call the function in `bodyTracking.js`
         }
     }
 }
