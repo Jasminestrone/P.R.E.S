@@ -205,3 +205,60 @@ progress::-moz-progress-bar {
   font-size: 2em;
   color: #333;
 }
+
+.tutorial-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  max-width: 600px;
+  text-align: center;
+}
+
+.tutorial-popup.show {
+  display: block;
+  opacity: 1;
+}
+
+.tutorial-content {
+  position: relative;
+}
+
+.tutorial-steps {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.tutorial-steps p {
+  margin: 10px 0;
+  color: #666;
+}
+
+/* Add these new styles */
+.tutorial-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.tutorial-overlay.show {
+  display: block;
+  opacity: 1;
+}
