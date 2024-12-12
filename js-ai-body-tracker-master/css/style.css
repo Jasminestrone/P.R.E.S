@@ -20,6 +20,14 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
+h6 {
+  font-size: .2rem;
+  font-weight: 200;
+  color: rgba(0, 0, 0, 0.75);
+  opacity: .70 ;
+  margin-bottom: 30px;
+  letter-spacing: .5px;
+}
 
 /* Flex Container */
 .flex-container {
@@ -287,4 +295,7 @@ progress::-moz-progress-bar {
     color: #6c757d;
     font-size: 1.1em;
     text-align: center;
+}
+#center_snaps{
+  text-align: center;
 }
