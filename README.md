@@ -29,6 +29,6 @@ P.R.E.S is designed to enhance your presentations by tracking body movements and
 
 **Enjoy!**
 
-~G~N~U~3~ ~L~i~c~e~n~s~e~ ~|~ ~2~0~2~4~ ~J~a~s~m~i~n~e~,~ ~G~a~b~e~,~ ~B~r~a~d~l~e~y~
+<sub>GNU3 License | 2024 Jasmine, Gabe, Bradley</sub>
 
 For more information and to contribute, visit our GitHub repository: [PRES](https://github.com/Jasminestrone/P.R.E.S)
