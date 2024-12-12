@@ -37,3 +37,27 @@ function getCookie(name) {
     }
     return null;
 }
+document.getElementById('downloadAnalysis').addEventListener('click', function() {
+    const content = document.getElementById('analysisContent').innerText;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const now = new Date();
+    const formattedDate = now.toISOString().split('T')[0];
+    a.download = `PRES_analysis_${formattedDate}.txt`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+});
+
+document.getElementById('copyAnalysis').addEventListener('click', function() {
+    const content = document.getElementById('analysisContent').innerText;
+    navigator.clipboard.writeText(content).then(() => {
+        // Optional: Show feedback that content was copied
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => {
+            this.innerHTML = originalText;
+        }, 2000);
+    });
+});
