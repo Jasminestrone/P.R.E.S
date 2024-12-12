@@ -1,19 +1,7 @@
 // Array to store gaze data
 let gazePoints = [];
 
-/**
- * Determines the current posture based on tracking data.
- * Replace the placeholder logic with actual analysis using pose landmarks.
- * @returns {string} - The assessed posture status.
- */
-function determinePosture() {
-    // Placeholder logic: Randomly assigns a posture status.
-    // TODO: Replace with actual posture assessment logic based on tracking data.
 
-    const postures = ['Good Posture', 'Bad Posture', 'Neutral Posture'];
-    const randomIndex = Math.floor(Math.random() * postures.length);
-    return postures[randomIndex];
-}
 
 
 // Arrays and variables for smoothing and hysteresis
@@ -425,12 +413,31 @@ function onPoseResults(results) {
     }
 }
 
-// Replace 'https://yourserverdomain.com/api/posture' with your actual server URL
+/**
+ * Determines the current posture based on tracking data.
+ * Replace the placeholder logic with actual analysis using pose landmarks.
+ * @returns {string} - The assessed posture status.
+ */
+function determinePosture() {
+    console.log('determinePosture function called'); // Debug log
+    // Placeholder logic: Randomly assigns a posture status.
+    // TODO: Replace with actual posture assessment logic based on tracking data.
+
+    const postures = ['Good Posture', 'Bad Posture', 'Neutral Posture'];
+    const randomIndex = Math.floor(Math.random() * postures.length);
+    return postures[randomIndex];
+}
+
+
+// js/bodyTracking.js
+
+const BACKEND_URL = 'https://your-app-name.herokuapp.com/api/posture'; // Replace with your Heroku URL
+
 function sendPostureData(data) {
     console.log('Sending posture data:', data); // Debug log
     updateStatus('Sending posture data to server...'); // Update status to "Tracking"
 
-    fetch('http://localhost:3000/api/posture', { // Ensure this URL is correct
+    fetch(BACKEND_URL, { // Updated URL
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -460,7 +467,6 @@ function sendPostureData(data) {
 }
 
 
-
 /**
  * Updates the status message displayed on the webpage with dynamic styling based on the message content.
  * @param {string} message - The status message to display.
@@ -487,7 +493,6 @@ function updateStatus(message) {
         console.warn('Status element not found in HTML.');
     }
 }
-
 
   
 // Function to log posture data

@@ -26,7 +26,8 @@ app.get('/', (req, res) => {
 app.post('/api/posture', (req, res) => {
     const { userId, posture, timestamp } = req.body;
 
-    console.log('Received POST /api/posture with data:', req.body);
+    console.log('--- Incoming POST /api/posture Request ---');
+    console.log('Received Data:', req.body);
 
     // Basic validation
     if (!userId || !posture || !timestamp) {
