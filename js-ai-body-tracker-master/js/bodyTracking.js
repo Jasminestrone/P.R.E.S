@@ -488,7 +488,6 @@ function stopTrackingBody() {
 
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
     initializeBlazePose();
 });

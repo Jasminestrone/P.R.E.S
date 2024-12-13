@@ -77,7 +77,7 @@ function calculateVolumeMetrics() {
     return {
         averageVolume: (totalVolume / totalEntries).toFixed(2),
         maxVolume: maxVolume.toFixed(2),
-        minVolume: minVolume.toFixed(2),
+        minVolume: minVolume.toFixed(2), // Min volume always outputs to 0 so ignore it
     };
 }
 
@@ -93,7 +93,6 @@ function stopTrackingVolume() {
             volCanvas.innerHTML = `
                 <p><strong>Average Volume:</strong> ${volumeMetrics.averageVolume}</p>
                 <p><strong>Max Volume:</strong> ${volumeMetrics.maxVolume}</p>
-                <p><strong>Min Volume:</strong> ${volumeMetrics.minVolume}</p>
             `;
         }
 
