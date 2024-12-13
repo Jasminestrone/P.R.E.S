@@ -1,8 +1,9 @@
-const startButton = document.getElementById('startButton');
-const outputDiv = document.getElementById('output');
+// Grab elements from html
+const startButton = document.getElementById('vocStartButton');
+const outputDiv = document.getElementById('voiceOutput');
 
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = 'en-US';
+recognition.lang = 'en-US'; // Sets language to better English
 
 recognition.onstart = () => {
     startButton.textContent = 'Listening...';

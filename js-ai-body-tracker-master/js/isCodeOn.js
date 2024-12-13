@@ -1,3 +1,4 @@
+// Create variables and grab elements
 let isRunning = false;
 let observationComplete = false;
 const codeRunner = document.getElementById("codeRunner");
@@ -35,8 +36,6 @@ function stopCode() {
             isRunning = false;
             observationComplete = true;
             buttonSwap();
-
-
 
             // Show the analysis canvas
             analysisCanvas.classList.remove("hidden-canvas");

@@ -440,12 +440,6 @@ function onPoseResults(results) {
             ctx.fill();
         });
 
-        // Append this inside `onPoseResults`
-        // postureLogs.push({
-        //     timestamp: new Date().toISOString(),
-        //     posture: displayedPosture, // Use the result of `updatePostureStatus`
-        // });
-
     }
 }
 
