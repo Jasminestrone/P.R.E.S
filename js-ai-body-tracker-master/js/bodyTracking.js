@@ -11,7 +11,6 @@ let lastLogTime = 0;
 let lastTime = performance.now(); // Track the last time `onPoseResults` was called
 let elapsedTime = 0; // Accumulate elapsed time
 
-
 // Arrays and variables for smoothing and hysteresis
 let spineAngleHistory = [];
 const SMOOTHING_WINDOW = 10;

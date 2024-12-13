@@ -45,7 +45,7 @@
                     <button id="downloadAnalysis" class="btn btn-primary" style="margin-right: 8px">
                         <i class="fas fa-download"></i> Download Analysis
                     </button>
-                    <button id="copyAnalysis" class="btn btn-secondary" style="margin-right: 8px">
+                    <button id="copyAnalysis" class="btn btn-warning" style="margin-right: 8px">
                         <i class="fas fa-copy"></i> Copy to Clipboard
                     </button>
                     <button id="closeCanvasButton" class="btn btn-secondary">Close</button>
@@ -93,20 +93,12 @@
                         <strong>Head Angle:</strong> <span id="headAngleInfo">Yaw: --, Pitch: --, Roll: --</span>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="container mt-4">
-            <div class="row">
-                <div class="col-md-8">
-                    <div id="presentationStats" class="stats-container"></div>
-                </div>
-                <div class="col-md-4">
+                <div class="md-4" style="margin-top: 48px">
                     <div class="github-info">
                         <a href="https://github.com/jasminestrone/P.R.E.S" target="_blank" class="github-link">
                             <i class="fab fa-github"></i> View on GitHub
                         </a>
-                        <div class="commit-count">
+                        <div class="commit-count" style="margin-bottom: 4px">
                             <span id="commitCount">Loading commits...</span>
                         </div>
                     </div>
@@ -114,6 +106,7 @@
             </div>
         </div>
     </div>
+    <div style="margin-bottom: 16px"></div>
 
     <!-- TensorFlow.js, BlazePose, and Plotly -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
