@@ -38,7 +38,7 @@ function getCookie(name) {
     return null;
 }
 document.getElementById('downloadAnalysis').addEventListener('click', function() {
-    const content = document.getElementById('analysisContent').innerText;
+    const content = document.getElementById('bodyAnalysisContent').innerText + document.getElementById("voiceAnalysisContent").innerText + document.getElementById("volumeAnalysisContent").innerText;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -51,7 +51,7 @@ document.getElementById('downloadAnalysis').addEventListener('click', function()
 });
 
 document.getElementById('copyAnalysis').addEventListener('click', function() {
-    const content = document.getElementById('analysisContent').innerText;
+    const content = document.getElementById('bodyAnalysisContent').innerText + document.getElementById("voiceAnalysisContent").innerText + document.getElementById("volumeAnalysisContent").innerText;
     navigator.clipboard.writeText(content).then(() => {
         // Optional: Show feedback that content was copied
         const originalText = this.innerHTML;
