@@ -442,10 +442,10 @@ function onPoseResults(results) {
         });
 
         // Append this inside `onPoseResults`
-        postureLogs.push({
-            timestamp: new Date().toISOString(),
-            posture: displayedPosture, // Use the result of `updatePostureStatus`
-        });
+        // postureLogs.push({
+        //     timestamp: new Date().toISOString(),
+        //     posture: displayedPosture, // Use the result of `updatePostureStatus`
+        // });
 
     }
 }
@@ -466,17 +466,25 @@ function stopTrackingSession() {
     isRunning = false; // Ensure tracking stops
     const metrics = calculateMetrics(); // Calculate metrics from postureLogs
 
-    // Get the analysis canvas and update its content
-    const analysisCanvas = document.getElementById("analysisContent");
-    if (analysisCanvas) {
-        analysisCanvas.innerHTML = `
-            <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
-
-
-            <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}% <strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
+    if (metrics.totalTime > 0) {
+        isRunning = false; // Ensure tracking stops
         
-        `;
+
+        // Get the analysis canvas and update its content
+        const analysisCanvas = document.getElementById("analysisContent");
+        if (analysisCanvas) {
+            analysisCanvas.innerHTML = `
+                <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
+
+
+                <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}% <strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
+            
+            `;
+        }
+
+        metrics.totalTime = 0;
     }
+
 }
 
 
