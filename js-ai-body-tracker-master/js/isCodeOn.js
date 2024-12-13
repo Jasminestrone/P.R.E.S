@@ -42,7 +42,8 @@ function stopCode() {
             analysisCanvas.classList.remove("hidden-canvas");
             analysisCanvas.classList.add("visible-canvas");
 
-            stopTrackingSession(); // Call the function in `bodyTracking.js`
+            stopTrackingBody(); // Call the function in `bodyTracking.js`
+            stopTrackingVolume(); // Call the function in `volumeDetection.js`
         }
     }
 }

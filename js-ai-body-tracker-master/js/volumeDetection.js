@@ -4,9 +4,7 @@ let analyserNode;
 let microphoneStream;
 let volumeMeterEl = document.getElementById("volumeMeter");
 let volumeLevelEl = document.getElementById("volumeLevel");
-
-// Stores volume data
-let soundLogs = [];
+let soundLogs = []; // Stores volume data
 
 async function startVolumeDetection() {
     if (!isRunning) return;
@@ -40,7 +38,7 @@ function monitorVolume() {
     function checkVolume() {
         if (!isRunning) return;
         analyserNode.getByteTimeDomainData(dataArray);
-        
+
         // Calculate a rough volume measurement (RMS)
         let sum = 0;
         for (let i = 0; i < bufferLength; i++) {
@@ -48,6 +46,9 @@ function monitorVolume() {
             sum += val * val;
         }
         let rms = Math.sqrt(sum / bufferLength);
+
+        // Log the volume data
+        soundLogs.push(rms);
 
         // Display the volume (0.0 - 1.0)
         volumeMeterEl.value = rms;
@@ -57,6 +58,48 @@ function monitorVolume() {
     }
 
     checkVolume();
+}
+
+function calculateVolumeMetrics() {
+    const totalEntries = soundLogs.length;
+    if (totalEntries === 0) {
+        return {
+            averageVolume: 0,
+            maxVolume: 0,
+            minVolume: 0,
+        };
+    }
+
+    const totalVolume = soundLogs.reduce((sum, volume) => sum + volume, 0);
+    const maxVolume = Math.max(...soundLogs);
+    const minVolume = Math.min(...soundLogs);
+
+    return {
+        averageVolume: (totalVolume / totalEntries).toFixed(2),
+        maxVolume: maxVolume.toFixed(2),
+        minVolume: minVolume.toFixed(2),
+    };
+}
+
+function stopTrackingVolume() {
+    isRunning = false; // Ensure tracking stops
+
+    const postureMetrics = calculateMetrics();
+    const volumeMetrics = calculateVolumeMetrics();
+
+    if (postureMetrics.totalTime > 0) {
+        const volCanvas = document.getElementById("volumeAnalysisContent");
+        if (volCanvas) {
+            volCanvas.innerHTML = `
+                <p><strong>Average Volume:</strong> ${volumeMetrics.averageVolume}</p>
+                <p><strong>Max Volume:</strong> ${volumeMetrics.maxVolume}</p>
+                <p><strong>Min Volume:</strong> ${volumeMetrics.minVolume}</p>
+            `;
+        }
+
+        // Reset logs
+        soundLogs = [];
+    }
 }
 
 // Wait for button input

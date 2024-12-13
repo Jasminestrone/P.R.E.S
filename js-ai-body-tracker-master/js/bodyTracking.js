@@ -461,7 +461,7 @@ function calculateMetrics() {
     };
 }
 
-function stopTrackingSession() {
+function stopTrackingBody() {
     isRunning = false; // Ensure tracking stops
     const metrics = calculateMetrics(); // Calculate metrics from postureLogs
 
@@ -476,7 +476,9 @@ function stopTrackingSession() {
             <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
 
 
-                <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}% <strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
+                <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}%</p>
+                
+                <p><strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
             
             `;
         }
