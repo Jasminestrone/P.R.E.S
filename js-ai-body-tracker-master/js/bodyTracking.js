@@ -470,7 +470,7 @@ function stopTrackingSession() {
         
 
     // Get the analysis canvas and update its content
-    const analysisCanvas = document.getElementById("analysisContent");
+    const analysisCanvas = document.getElementById("bodyAnalysisContent");
     if (analysisCanvas) {
         analysisCanvas.innerHTML = `
             <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
