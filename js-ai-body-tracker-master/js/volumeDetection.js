@@ -1,8 +1,12 @@
+// Variables for running volume detection
 let audioContext;
 let analyserNode;
 let microphoneStream;
 let volumeMeterEl = document.getElementById("volumeMeter");
 let volumeLevelEl = document.getElementById("volumeLevel");
+
+// Stores volume data
+let soundLogs = [];
 
 async function startVolumeDetection() {
     if (!isRunning) return;

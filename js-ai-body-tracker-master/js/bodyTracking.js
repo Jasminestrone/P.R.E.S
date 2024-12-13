@@ -7,7 +7,6 @@ let isTracking = false;
 let observationStartTime = null;
 let lastLogTime = 0;
 
-
 let lastTime = performance.now(); // Track the last time `onPoseResults` was called
 let elapsedTime = 0; // Accumulate elapsed time
 
@@ -470,11 +469,11 @@ function stopTrackingSession() {
         isRunning = false; // Ensure tracking stops
         
 
-        // Get the analysis canvas and update its content
-        const analysisCanvas = document.getElementById("analysisContent");
-        if (analysisCanvas) {
-            analysisCanvas.innerHTML = `
-                <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
+    // Get the analysis canvas and update its content
+    const analysisCanvas = document.getElementById("analysisContent");
+    if (analysisCanvas) {
+        analysisCanvas.innerHTML = `
+            <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
 
 
                 <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}% <strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
