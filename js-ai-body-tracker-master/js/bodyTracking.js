@@ -471,19 +471,14 @@ function stopTrackingSession() {
     const analysisCanvas = document.getElementById("analysisContent");
     if (analysisCanvas) {
         analysisCanvas.innerHTML = `
-            <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}%</p>
-            <p><strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
             <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
-        `;
 
-        // Make the analysis canvas visible
-        analysisCanvas.classList.remove("hidden-canvas");
-        analysisCanvas.classList.add("visible-canvas");
-    } else {
-        console.error("Analysis canvas not found in the DOM.");
+
+            <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}% <strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
+        
+        `;
     }
 }
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
