@@ -592,3 +592,14 @@ document.addEventListener('DOMContentLoaded', initializePieChart);
 document.addEventListener("DOMContentLoaded", () => {
     initializeBlazePose();
 });
+
+function startCode() {
+    if (!observationComplete) {
+        if (!isRunning) {
+            isRunning = true;
+            buttonSwap();
+            // Add this line to automatically start volume detection
+            startVolumeDetection();
+        }
+    }
+}
