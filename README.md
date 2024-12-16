@@ -2,7 +2,7 @@
   <img src="https://github.com/Jasminestrone/P.R.E.S/blob/main/js-ai-body-tracker-master/tinypres2.png" alt="image">
   </p>
 <p align="center">
-<img src="https://img.shields.io/badge/Releases-Beta_3-blue" alt="image">
+<img src="https://img.shields.io/badge/Release-Beta_3-blue" alt="image">
 <img src="https://img.shields.io/badge/Build-12/16/24-blue" alt="image">
 </p>
 <p align="center">
