@@ -8,7 +8,66 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    </head>
+
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    
+    <style>
+       /* CSS Styling */
+
+        /* CSS Styling */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .piechart-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .piechart {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-image: conic-gradient(
+                orange 0deg 360deg /* Initial fallback color */
+            );
+            transition: background-image 0.5s ease; /* Smooth transition */
+        }
+
+        .piechart-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            pointer-events: none; /* Allows clicks to pass through to the pie chart */
+        }
+
+        #mainContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centers horizontally */
+            justify-content: center; /* Centers vertically if height is defined */
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+
 <body>
     <div class="tutorial-overlay"></div>
     <div id="tutorial-modal" class="tutorial-popup">
@@ -38,8 +97,23 @@
         </div>
         <div id="analysisCanvas">
             <h1>Observation Summary</h1>
+
             <div id="mainContent">
                 <div id="bodyAnalysisContent"><!-- Body analysis --></div>
+                
+                
+               
+                
+                <h3>Pie Chart</h3>
+
+                <div class="piechart-container">
+                    <div class="piechart" id="piechart">
+                        <div class="piechart-label" id="piechart-label">
+                            Good: 0%<br>Bad: 0%<br>Neutral: 100%
+                        </div>
+                    </div>
+                </div>
+
                 <div id="voiceAnalysisContent"><!-- Voice analysis --></div>
                 <div id="volumeAnalysisContent"><!-- Volume analysis (add more as neccesarry) --></div>
                 <div class="analysis-buttons">
