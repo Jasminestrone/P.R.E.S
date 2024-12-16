@@ -477,9 +477,7 @@ function stopTrackingBody() {
             <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
 
 
-                <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}%</p>
-                
-                <p><strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
+               
             
             `;
         }
