@@ -1,4 +1,4 @@
-![image](js-ai-body-tracker-master\pres.png)
+![image](https://github.com/Jasminestrone/P.R.E.S/blob/main/js-ai-body-tracker-master/pres.png)
 
 ![Static Badge](https://img.shields.io/badge/Releases-Beta_3-blue) ![Static Badge](https://img.shields.io/badge/Build-12/16/24-blue)
 
