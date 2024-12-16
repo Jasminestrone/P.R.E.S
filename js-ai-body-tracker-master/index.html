@@ -1,133 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>P.R.E.S</title>
     <!-- Bootstrap CSS & Web icon -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
     <meta charset="UTF-8" />
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
-
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
     <div class="tutorial-overlay"></div>
     <div id="tutorial-modal" class="tutorial-popup">
-        <div class="tutorial-content">
-            <h3>Welcome to P.R.E.S! 👋</h3>
-            <h6>Presentation Recognition and Enhancement Software</h6>
-            <div class="tutorial-steps">
-                <p>1. Click "Start Presentation" to begin tracking</p>
-                <p>2. Enable camera and microphone when prompted</p>
-                <p>3. Use "Start Voice Input" to track speech patterns</p>
-                <p>4. Monitor your body language and volume in real-time</p>
-                <p class="center_snaps"><b>Remember:</b> PRES is just a tool for assisting with your presenting, your slides should only be there to support your words, and you should <b>NEVER</b> read off your slides</p>
-            </div>
-            <button id="closeTutorial" class="btn btn-primary">Got it!</button>
+      <div class="tutorial-content">
+        <h3>Welcome to P.R.E.S! 👋</h3>
+        <h6>Presentation Recognition and Enhancement Software</h6>
+        <div class="tutorial-steps">
+          <p>1. Click "Start Presentation" to begin tracking</p>
+          <p>2. Enable camera and microphone when prompted</p>
+          <p>3. Use "Start Voice Input" to track speech patterns</p>
+          <p>4. Monitor your body language and volume in real-time</p>
+          <p class="center_snaps">
+            <b>Remember:</b> PRES is just a tool for assisting with your
+            presenting, your slides should only be there to support your words,
+            and you should <b>NEVER</b> read off your slides
+          </p>
         </div>
+        <button id="closeTutorial" class="btn btn-primary">Got it!</button>
+      </div>
     </div>
 
     <div class="container">
-        <h1 class="mt-4 text-center">P.R.E.S</h1>
+      <h1 class="mt-4 text-center">P.R.E.S</h1>
 
-    <div class="mt-4 text-center">
+      <div class="mt-4 text-center">
         <div>
-            <!-- Start & Stop Button -->
-            <button id="codeRunner" class="btn btn-success">Start Presentation</button>
+          <!-- Start & Stop Button -->
+          <button id="codeRunner" class="btn btn-success">
+            Start Presentation
+          </button>
         </div>
         <div id="analysisCanvas">
-            <h1>Observation Summary</h1>
+          <h1>Observation Summary</h1>
 
-            <div id="mainContent">
-                <div id="bodyAnalysisContent"><!-- Body analysis --></div>
-                
-                
-               
-                
-                <h3>Pie Chart</h3>
+          <div id="mainContent">
+            <div id="bodyAnalysisContent"><!-- Body analysis --></div>
 
-                <div class="piechart-container">
-                    <div class="piechart" id="piechart">
-                        <div class="piechart-label" id="piechart-label">
-                            Good: 0%<br>Bad: 0%<br>Neutral: 100%
-                        </div>
-                    </div>
+            <h3>Pie Chart</h3>
+
+            <div class="piechart-container">
+              <div class="piechart" id="piechart">
+                <div class="piechart-label" id="piechart-label">
+                  Good: 0%<br />Bad: 0%<br />Neutral: 100%
                 </div>
-
-                <div id="voiceAnalysisContent"><!-- Voice analysis --></div>
-                <div id="volumeAnalysisContent"><!-- Volume analysis (add more as neccesarry) --></div>
-                <div class="analysis-buttons">
-                    <button id="downloadAnalysis" class="btn btn-primary" style="margin-right: 8px">
-                        <i class="fas fa-download"></i> Download Analysis
-                    </button>
-                    <button id="copyAnalysis" class="btn btn-warning" style="margin-right: 8px">
-                        <i class="fas fa-copy"></i> Copy to Clipboard
-                    </button>
-                    <button id="closeCanvasButton" class="btn btn-secondary">Close</button>
-                </div>
+              </div>
             </div>
+
+            <div id="voiceAnalysisContent"><!-- Voice analysis --></div>
+            <div id="volumeAnalysisContent">
+              <!-- Volume analysis (add more as neccesarry) -->
+            </div>
+            <div class="analysis-buttons">
+              <button
+                id="downloadAnalysis"
+                class="btn btn-primary"
+                style="margin-right: 8px"
+              >
+                <i class="fas fa-download"></i> Download Analysis
+              </button>
+              <button
+                id="copyAnalysis"
+                class="btn btn-warning"
+                style="margin-right: 8px"
+              >
+                <i class="fas fa-copy"></i> Copy to Clipboard
+              </button>
+              <button id="closeCanvasButton" class="btn btn-secondary">
+                Close
+              </button>
+            </div>
+          </div>
         </div>
-    </div>
-        
-        <div class="flex-container">
-            <!-- Camera Output Section -->
-            <div class="camera-section">
-                <div class="camera-placeholder">
-                    <img src="pres.png" alt="Camera placeholder">
-                    <p>Click "Start Presentation" to begin tracking</p>
-                </div>
-                <canvas id="canvas" width="640" height="480" style="border: 1px solid black;"></canvas>
-                <!-- Heatmap Container -->
-                <div id="heatmap" class="heatmap-container"></div>
-            </div>
+      </div>
 
-            <!-- Buttons and Text Section -->
-            <div class="info-section">
-                <!-- Voice Input Section -->
-                <button id="vocStartButton" class="btn btn-primary mt-3" style="margin-right: 16px">Start Voice Input</button>
-                <button id="volStartButton" class="btn btn-info mt-3">Start Volume Detection</button>
-                <div id="voiceOutput" class="mt-3"></div>
-                
-                <!-- Volume Display Section -->
-                <div class="mt-4">
-                    <h3>Volume Level</h3>
-                    <div><strong>Current Volume:</strong> <span id="volumeLevel">--</span></div>
-                    <progress id="volumeMeter" value="0" max="1" style="width: 100%;"></progress>
-                </div>
-
-                <!-- Eye Coordinates Output Section -->
-                <div class="mt-4">
-                    <h3>Eye Coordinates</h3>
-                    <div>
-                        <strong>Left Eye:</strong> <span id="leftEyeCoords">x: --, y: --, z: --</span>
-                    </div>
-                    <div>
-                        <strong>Right Eye:</strong> <span id="rightEyeCoords">x: --, y: --, z: --</span>
-                    </div>
-                    <div>
-                        <strong>Head Angle:</strong> <span id="headAngleInfo">Yaw: --, Pitch: --, Roll: --</span>
-                    </div>
-                </div>
-
-                <!-- Github link -->
-                <div class="md-4" style="margin-top: 48px">
-                    <div class="github-info">
-                        <a href="https://github.com/jasminestrone/P.R.E.S" target="_blank" class="github-link">
-                            <i class="fab fa-github"></i> View on GitHub
-                        </a>
-                        <div class="commit-count" style="margin-bottom: 4px">
-                            <span id="commitCount">Loading commits...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="flex-container">
+        <!-- Camera Output Section -->
+        <div class="camera-section">
+          <div class="camera-placeholder">
+            <img src="pres.png" alt="Camera placeholder" />
+            <p>Click "Start Presentation" to begin tracking</p>
+          </div>
+          <canvas
+            id="canvas"
+            width="640"
+            height="480"
+            style="border: 1px solid black"
+          ></canvas>
+          <!-- Heatmap Container -->
+          <div id="heatmap" class="heatmap-container"></div>
         </div>
+
+        <!-- Buttons and Text Section -->
+        <div class="info-section">
+          <!-- Voice Input Section -->
+          <button
+            id="vocStartButton"
+            class="btn btn-primary mt-3"
+            style="margin-right: 16px"
+          >
+            Start Voice Input
+          </button>
+          <button id="volStartButton" class="btn btn-info mt-3">
+            Start Volume Detection
+          </button>
+          <div id="voiceOutput" class="mt-3"></div>
+
+          <!-- Volume Display Section -->
+          <div class="mt-4">
+            <h3>Volume Level</h3>
+            <div>
+              <strong>Current Volume:</strong> <span id="volumeLevel">--</span>
+            </div>
+            <progress
+              id="volumeMeter"
+              value="0"
+              max="1"
+              style="width: 100%"
+            ></progress>
+          </div>
+
+          <!-- Eye Coordinates Output Section -->
+          <div class="mt-4">
+            <h3>Eye Coordinates</h3>
+            <div>
+              <strong>Left Eye:</strong>
+              <span id="leftEyeCoords">x: --, y: --, z: --</span>
+            </div>
+            <div>
+              <strong>Right Eye:</strong>
+              <span id="rightEyeCoords">x: --, y: --, z: --</span>
+            </div>
+            <div>
+              <strong>Head Angle:</strong>
+              <span id="headAngleInfo">Yaw: --, Pitch: --, Roll: --</span>
+            </div>
+          </div>
+
+          <!-- Github link -->
+          <div class="md-4" style="margin-top: 48px">
+            <div class="github-info">
+              <a
+                href="https://github.com/jasminestrone/P.R.E.S"
+                target="_blank"
+                class="github-link"
+              >
+                <i class="fab fa-github"></i> View on GitHub
+              </a>
+              <div class="commit-count" style="margin-bottom: 4px">
+                <span id="commitCount">Loading commits...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div style="margin-bottom: 16px"></div>
 
@@ -159,5 +203,5 @@
     <!-- Ohter scripts ig -->
     <script src="js/index.js"></script>
     <script src="js/scripts.js"></script>
-</body>
+  </body>
 </html>
