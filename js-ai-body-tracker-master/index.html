@@ -25,7 +25,7 @@
         <h3>Welcome to P.R.E.S! 👋</h3>
         <h6>Presentation Recognition and Enhancement Software</h6>
         <div class="tutorial-steps">
-          <p>1. Click "Start Presentation" to begin tracking</p>
+          <p>1. Click "Start Presentation" to begin tracking and recording</p>
           <p>2. Enable camera and microphone when prompted</p>
           <p>3. Use "Start Voice Input" to track speech patterns</p>
           <p>4. Monitor your body language and volume in real-time</p>
@@ -48,6 +48,8 @@
           <button id="codeRunner" class="btn btn-success">
             Start Presentation
           </button>
+          <!-- Hidden video element to store recording -->
+          <video id="recordedVideo" style="display: none"></video>
         </div>
         <div id="analysisCanvas">
           <h1>Observation Summary</h1>
@@ -67,8 +69,10 @@
 
             <div id="voiceAnalysisContent"><!-- Voice analysis --></div>
             <div id="volumeAnalysisContent">
-              <!-- Volume analysis (add more as neccesarry) -->
-            </div>
+              <p><light>If this says 0, you need to turn on "Start volume detection"</light></p>
+              <p><strong>Average Volume:</strong> 0</p>
+              <p><strong>Max Volume:</strong> 0</p>
+          </div>
             <div class="analysis-buttons">
               <button
                 id="downloadAnalysis"
@@ -76,6 +80,13 @@
                 style="margin-right: 8px"
               >
                 <i class="fas fa-download"></i> Download Analysis
+              </button>
+              <button
+                id="downloadVideo"
+                class="btn btn-success"
+                style="margin-right: 8px"
+              >
+                <i class="fas fa-video"></i> Download Recording
               </button>
               <button
                 id="copyAnalysis"
@@ -203,5 +214,8 @@
     <!-- Ohter scripts ig -->
     <script src="js/index.js"></script>
     <script src="js/scripts.js"></script>
+
+    <!--Recording-->
+    <script src="js/recording.js"></script>
   </body>
 </html>
