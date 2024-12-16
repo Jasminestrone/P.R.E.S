@@ -1,5 +1,8 @@
-# P.R.E.S
-Release: **Beta 3** | build: **12.12.2024**
+<p align="center">
+  <img src="https://github.com/Jasminestrone/P.R.E.S/blob/main/js-ai-body-tracker-master/tinypres.png" alt="image">
+</p>
+
+![Static Badge](https://img.shields.io/badge/Releases-Beta_3-blue) ![Static Badge](https://img.shields.io/badge/Build-12/16/24-blue)
 
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 
