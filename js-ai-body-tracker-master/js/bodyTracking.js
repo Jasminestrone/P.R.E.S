@@ -185,8 +185,9 @@ function onPoseResults(results) {
     postureLogs.push({
       timestamp: new Date().toISOString(),
       posture: displayedPosture, // Use the current posture
+      
     });
-    console.log(`Logged posture: ${displayedPosture}`);
+    
 
     // Update metrics and pie chart
     updateMetricsAndChart();
@@ -583,7 +584,7 @@ function updateMetricsAndChart() {
     totalTime: metricsData.totalTime,
   };
 
-  console.log("Metrics updated:", window.metrics);
+
 
   // Update the pie chart
   updatePieChart();
@@ -599,7 +600,7 @@ function updatePieChart() {
     return;
   }
 
-  console.log("Updating Pie Chart with metrics:", window.metrics);
+
 
   // Extract and sanitize percentages
   let goodPercentage = window.metrics.goodPosturePercentage; // 0 to 100
@@ -629,14 +630,11 @@ function updatePieChart() {
   const badDegrees = (badPercentage / 100) * 360;
   const neutralDegrees = (remainingPercentage / 100) * 360;
 
-  console.log(
-    `Degrees - Good: ${goodDegrees}, Bad: ${badDegrees}, Neutral: ${neutralDegrees}`
-  );
 
   // Update the conic-gradient background
   const pieChart = document.getElementById("piechart");
   if (!pieChart) {
-    console.error("Pie chart element with ID 'piechart' not found in the DOM.");
+
     return;
   }
   pieChart.style.backgroundImage = `conic-gradient(
@@ -658,7 +656,7 @@ function updatePieChart() {
   const displayNeutral = Math.round(neutralDegrees);
   label.innerHTML = `Good: ${displayGood}%<br>Bad: ${displayBad}%<br>Neutral: ${displayNeutral}%`;
 
-  console.log("Pie chart label updated.");
+
 }
 
 /**
