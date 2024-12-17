@@ -10,6 +10,10 @@ let lastLogTime = 0;
 let lastTime = performance.now(); // Track the last time `onPoseResults` was called
 let elapsedTime = 0; // Accumulate elapsed time
 
+// Variables for video recording
+let mediaRecorder;
+let recordedChunks = [];
+
 // Arrays and variables for smoothing and hysteresis
 let spineAngleHistory = [];
 const SMOOTHING_WINDOW = 10;
@@ -95,11 +99,13 @@ async function initializeBlazePose() {
 
     pose.onResults(onPoseResults);
 
-    const video = await setupCamera();
+    const { video, stream } = await setupCamera();
     video.play();
 
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
+    startRecording(stream);
 
     async function processVideo() {
         await pose.send({ image: video });
@@ -123,7 +129,40 @@ async function setupCamera() {
 
     video.srcObject = stream;
     await new Promise((resolve) => (video.onloadedmetadata = resolve));
-    return video;
+    return { video, stream }; // Return both the video and the stream
+}
+
+function startRecording(stream) {
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+    mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+        }
+    };
+
+    mediaRecorder.start();
+}
+
+function stopRecording() {
+    return new Promise((resolve, reject) => {
+        if (mediaRecorder) {
+            mediaRecorder.stop();
+            mediaRecorder.onstop = () => {
+                try {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    console.log("Url Created: " + url);
+                    resolve(url); // Resolve the Promise with the URL
+                } catch (error) {
+                    reject(error); // Reject the Promise if an error occurs
+                }
+            };
+        } else {
+            reject(new Error("No mediaRecorder available"));
+        }
+    });
 }
 
 

@@ -4,6 +4,7 @@ let observationComplete = false;
 const codeRunner = document.getElementById("codeRunner");
 const analysisCanvas = document.getElementById("analysisCanvas");
 const closeCanvasButton = document.getElementById("closeCanvasButton");
+const downloadButton = document.getElementById("downloadVideo");
 
 function buttonSwap() {
     if (isRunning) {
@@ -33,6 +34,19 @@ function startCode() {
 function stopCode() {
     if (!observationComplete) {
         if (isRunning) {
+            stopRecording()
+                .then((url) => {
+                    console.log("Recording URL:", url);
+                    downloadButton.addEventListener("click", () => {
+                        // Create a downloadable link
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = url;
+                        downloadLink.download = 'presentation_recording.webm';
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                    });
+                });
             isRunning = false;
             observationComplete = true;
             buttonSwap();
