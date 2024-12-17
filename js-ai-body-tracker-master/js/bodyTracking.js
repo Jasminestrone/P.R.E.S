@@ -184,6 +184,9 @@ function onPoseResults(results) {
             posture: displayedPosture, // Use the current posture
         });
         console.log(`Logged posture: ${displayedPosture}`);
+
+         // Update metrics and pie chart
+        updateMetricsAndChart();
     }
 
     // Existing posture detection logic
@@ -487,6 +490,10 @@ function calculateMetrics() {
     const goodPostureCount = postureLogs.filter(entry => entry.posture === "Good Posture").length;
     const badPostureCount = postureLogs.filter(entry => entry.posture === "Bad Posture").length;
 
+    // Prevent division by zero
+    const goodPosturePercentage = totalEntries === 0 ? 0 : goodPostureCount / totalEntries;
+    const badPosturePercentage = totalEntries === 0 ? 0 : badPostureCount / totalEntries;
+
     return {
         goodPosturePercentage: ((goodPostureCount / totalEntries) * 100).toFixed(2),
         badPosturePercentage: ((badPostureCount / totalEntries) * 100).toFixed(2),
@@ -509,9 +516,7 @@ function stopTrackingBody() {
             <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
 
 
-                <p><strong>Good Posture:</strong> ${metrics.goodPosturePercentage}%</p>
-                
-                <p><strong>Bad Posture:</strong> ${metrics.badPosturePercentage}%</p>
+               
             
             `;
         }
@@ -520,6 +525,108 @@ function stopTrackingBody() {
     }
 
 }
+
+function updateMetricsAndChart() {
+    const metricsData = calculateMetrics();
+
+    // Assign metrics as numbers
+    window.metrics = {
+        goodPosturePercentage: parseFloat(metricsData.goodPosturePercentage),
+        badPosturePercentage: parseFloat(metricsData.badPosturePercentage),
+        totalTime: metricsData.totalTime,
+    };
+
+    console.log("Metrics updated:", window.metrics);
+
+    // Update the pie chart
+    updatePieChart();
+}
+
+
+    // Define the updatePieChart function
+function updatePieChart() {
+    // Check if 'metrics' object exists
+    if (typeof window.metrics === 'undefined') {
+            console.error("Metrics object not found. Ensure updateMetricsAndChart is called correctly.");
+            return;
+    }
+    
+    console.log("Updating Pie Chart with metrics:", window.metrics);
+    
+        // Extract and sanitize percentages
+        let goodPercentage = window.metrics.goodPosturePercentage; // 0 to 100
+        let badPercentage = window.metrics.badPosturePercentage;   // 0 to 100
+    
+        // Handle non-numeric or undefined values
+        goodPercentage = isNaN(goodPercentage) ? 0 : goodPercentage;
+        badPercentage = isNaN(badPercentage) ? 0 : badPercentage;
+    
+        // Clamp percentages between 0 and 100
+        goodPercentage = Math.min(Math.max(goodPercentage, 0), 100);
+        badPercentage = Math.min(Math.max(badPercentage, 0), 100);
+    
+        // Calculate remaining percentage for neutral
+        let remainingPercentage = 100 - (goodPercentage + badPercentage);
+    
+        // If remainingPercentage is negative, scale down good and bad percentages proportionally
+        if (remainingPercentage < 0) {
+            const total = goodPercentage + badPercentage;
+            goodPercentage = (goodPercentage / total) * 100;
+            badPercentage = (badPercentage / total) * 100;
+            remainingPercentage = 0;
+        }
+    
+        // Convert percentages to degrees
+        const goodDegrees = (goodPercentage / 100) * 360;
+        const badDegrees = (badPercentage / 100) * 360;
+        const neutralDegrees = (remainingPercentage / 100) * 360;
+    
+        console.log(`Degrees - Good: ${goodDegrees}, Bad: ${badDegrees}, Neutral: ${neutralDegrees}`);
+    
+        // Update the conic-gradient background
+        const pieChart = document.getElementById('piechart');
+        if (!pieChart) {
+            console.error("Pie chart element with ID 'piechart' not found in the DOM.");
+            return;
+        }
+        pieChart.style.backgroundImage = `conic-gradient(
+            lightblue 0deg ${goodDegrees}deg,
+            pink ${goodDegrees}deg ${goodDegrees + badDegrees}deg,
+            orange ${goodDegrees + badDegrees}deg 360deg
+        )`;
+    
+        // Update the label with percentages
+        const label = document.getElementById('piechart-label');
+        if (!label) {
+            console.error("Pie chart label element with ID 'piechart-label' not found in the DOM.");
+            return;
+        }
+        const displayGood = Math.round(goodPercentage);
+        const displayBad = Math.round(badPercentage);
+        const displayNeutral = Math.round(neutralDegrees);
+        label.innerHTML = `Good: ${displayGood}%<br>Bad: ${displayBad}%<br>Neutral: ${displayNeutral}%`;
+    
+        console.log("Pie chart label updated.");
+    }
+    
+
+    /**
+     * Function to initialize the pie chart update.
+     * This function assumes that bodyTracking.js will update metrics and calls updatePieChart accordingly.
+     */
+function initializePieChart() {
+        // Initial update
+        updatePieChart();
+
+        // Polling every second to check for updates (optional)
+        // If 'updateMetricsAndChart' is called whenever metrics change, polling may not be necessary
+        setInterval(() => {
+            updatePieChart();
+        }, 1000);
+    }
+
+    // Initialize the pie chart once the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initializePieChart);
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeBlazePose();

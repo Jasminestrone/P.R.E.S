@@ -1,7 +1,15 @@
-# P.R.E.S
-Release: **Beta 3** | build: **12.12.2024**
-
-![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+<p align="center">
+  <img src="https://github.com/Jasminestrone/P.R.E.S/blob/main/js-ai-body-tracker-master/tinypres2.png" alt="image">
+  </p>
+<p align="center">
+<img src="https://img.shields.io/badge/Release-Beta_3-blue" alt="image">
+<img src="https://img.shields.io/badge/Build-12/16/24-blue" alt="image">
+</p>
+<p align="center">
+<img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E" alt="image">
+<img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white" alt="image">
+<img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="image">
+</p>
 
 ## Features
 - Hand tracking: Track and analyze hand movements to provide feedback on gestures.
