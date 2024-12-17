@@ -188,13 +188,11 @@ function onPoseResults(results) {
       
     });
     
-
     // Update metrics and pie chart
     updateMetricsAndChart();
   }
 
   // Existing posture detection logic
-
   const placeholder = document.querySelector(".camera-placeholder");
   if (!isRunning) {
     if (placeholder) placeholder.style.display = "flex";
@@ -262,7 +260,7 @@ function onPoseResults(results) {
       z: (leftKnee.z + rightKnee.z) / 2,
     };
 
-    /*** Compute spine curvature angle ***/
+    // Compute spine curvature angle
     const upperSpineVec = {
       x: midShoulder.x - midHip.x,
       y: midShoulder.y - midHip.y,
@@ -563,10 +561,6 @@ function stopTrackingBody() {
     if (analysisCanvas) {
       analysisCanvas.innerHTML = `
             <p><strong>Total Time:</strong> ${metrics.totalTime} seconds</p>
-
-
-               
-            
             `;
     }
 
@@ -584,8 +578,6 @@ function updateMetricsAndChart() {
     totalTime: metricsData.totalTime,
   };
 
-
-
   // Update the pie chart
   updatePieChart();
 }
@@ -599,8 +591,6 @@ function updatePieChart() {
     );
     return;
   }
-
-
 
   // Extract and sanitize percentages
   let goodPercentage = window.metrics.goodPosturePercentage; // 0 to 100
@@ -630,11 +620,9 @@ function updatePieChart() {
   const badDegrees = (badPercentage / 100) * 360;
   const neutralDegrees = (remainingPercentage / 100) * 360;
 
-
   // Update the conic-gradient background
   const pieChart = document.getElementById("piechart");
   if (!pieChart) {
-
     return;
   }
   pieChart.style.backgroundImage = `conic-gradient(
@@ -655,7 +643,6 @@ function updatePieChart() {
   const displayBad = Math.round(badPercentage);
   const displayNeutral = Math.round(neutralDegrees);
   label.innerHTML = `Good: ${displayGood}%<br>Bad: ${displayBad}%<br>Neutral: ${displayNeutral}%`;
-
 
 }
 

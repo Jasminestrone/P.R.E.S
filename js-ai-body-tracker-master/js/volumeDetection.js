@@ -7,14 +7,6 @@ let volumeLevelEl = document.getElementById("volumeLevel");
 let soundLogs = []; // Stores volume data
 let secondLogs = [];
 
-
-
-
-
-
-
-
-
 async function startVolumeDetection() {
   if (!isRunning) return;
   try {
@@ -42,7 +34,6 @@ async function startVolumeDetection() {
     volumeLevelEl.textContent = "Microphone access denied or error.";
   }
 
-  
 }
 
 function monitorVolume() {
@@ -73,7 +64,7 @@ function monitorVolume() {
     volumeMeterEl.value = rms;
     volumeLevelEl.textContent = rms.toFixed(2);
     
-    setTimeout(checkVolume, 1000); // has it check every 1 second
+    setTimeout(checkVolume, 1000); // Has it check every 1 second
 
     console.log(soundLogs);
     console.log(secondLogs);
@@ -127,61 +118,55 @@ function stopTrackingVolume() {
     secondLogs = [];
   }
 
-  
-
 }
 
-
 function graph() {
-    // Clear any previous chart content in the div
-    const volAnalysisDiv = document.getElementById("volumeAnalysisContent");
-    volAnalysisDiv.innerHTML = ""; // Clear the content
-  
-    // Dynamically create a canvas element
-    const canvas = document.createElement("canvas");
-    canvas.id = "volumeChart";
-    canvas.width = 400; // Optional: Set width
-    canvas.height = 200; // Optional: Set height
-  
-    // Append the canvas to the div
-    volAnalysisDiv.appendChild(canvas);
-  
-    // Map soundLogs and secondLogs into coordinate pairs
-    const coords = soundLogs.map((v, i) => ({ x: secondLogs[i], y: v }));
-  
-    // Render the Chart
-    const ctx = canvas.getContext("2d");
-    new Chart(ctx, {
-      type: "scatter",
-      data: {
-        datasets: [
-          {
-            label: "Volume over Time",
-            data: coords,
-            backgroundColor: "rgba(75, 192, 192, 0.6)", // Optional styling
-            borderColor: "rgba(75, 192, 192, 1)",
-            pointRadius: 5
-          }
-        ]
-      },
-      options: {
-        scales: {
-          x: {
-            title: { display: true, text: "Time (Seconds)" },
-            type: "linear"
-          },
-          y: {
-            title: { display: true, text: "Volume (RMS)" },
-            beginAtZero: true
-          }
+  // Clear any previous chart content in the div
+  const volAnalysisDiv = document.getElementById("volumeAnalysisContent");
+  volAnalysisDiv.innerHTML = ""; // Clear the content
+
+  // Dynamically create a canvas element
+  const canvas = document.createElement("canvas");
+  canvas.id = "volumeChart";
+  canvas.width = 400; // Optional: Set width
+  canvas.height = 200; // Optional: Set height
+
+  // Append the canvas to the div
+  volAnalysisDiv.appendChild(canvas);
+
+  // Map soundLogs and secondLogs into coordinate pairs
+  const coords = soundLogs.map((v, i) => ({ x: secondLogs[i], y: v }));
+
+  // Render the Chart
+  const ctx = canvas.getContext("2d");
+  new Chart(ctx, {
+    type: "scatter",
+    data: {
+      datasets: [
+        {
+          label: "Volume over Time",
+          data: coords,
+          backgroundColor: "rgba(75, 192, 192, 0.6)", // Optional styling
+          borderColor: "rgba(75, 192, 192, 1)",
+          pointRadius: 5
+        }
+      ]
+    },
+    options: {
+      scales: {
+        x: {
+          title: { display: true, text: "Time (Seconds)" },
+          type: "linear"
+        },
+        y: {
+          title: { display: true, text: "Volume (RMS)" },
+          beginAtZero: true
         }
       }
-    });
-  }
+    }
+  });
+}
   
-
-
-
 // Wait for button input
 document.getElementById("volStartButton").addEventListener("click", () => {
   startVolumeDetection();

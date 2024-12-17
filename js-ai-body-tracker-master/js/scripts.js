@@ -39,6 +39,7 @@ function getCookie(name) {
   }
   return null;
 }
+
 document
   .getElementById("downloadAnalysis")
   .addEventListener("click", function () {
