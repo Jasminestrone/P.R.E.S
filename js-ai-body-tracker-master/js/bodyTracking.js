@@ -129,7 +129,7 @@ async function setupCamera() {
 
   const stream = await navigator.mediaDevices.getUserMedia({
     video: { width: 640, height: 480 },
-    audio: false,
+    audio: false, // Set to true if we want the recording to have sound
   });
 
   video.srcObject = stream;
